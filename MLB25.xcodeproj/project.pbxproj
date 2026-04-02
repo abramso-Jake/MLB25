@@ -6,17 +6,34 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXFileReference section */
-		95E794BE2F7DC95B006ADAC6 /* MLB25.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLB25.app; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
+/* Begin PBXBuildFile section */
+		95E0DA1E2F7DEDCF00CFDF78 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E0DA1D2F7DEDCF00CFDF78 /* PlayerViewModel.swift */; };
+		95E0DA222F7DF34F00CFDF78 /* PlayerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E0DA212F7DF34F00CFDF78 /* PlayerListView.swift */; };
+		95E795182F7DD574006ADAC6 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E795122F7DD574006ADAC6 /* ListView.swift */; };
+		95E795192F7DD574006ADAC6 /* MLB25App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E795132F7DD574006ADAC6 /* MLB25App.swift */; };
+		95E7951A2F7DD574006ADAC6 /* Roster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E795142F7DD574006ADAC6 /* Roster.swift */; };
+		95E7951B2F7DD574006ADAC6 /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E795152F7DD574006ADAC6 /* Team.swift */; };
+		95E7951C2F7DD574006ADAC6 /* TeamViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E795162F7DD574006ADAC6 /* TeamViewModel.swift */; };
+		95E7951D2F7DD574006ADAC6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95E795112F7DD574006ADAC6 /* Assets.xcassets */; };
+		95E7951F2F7DD77E006ADAC6 /* RosterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E7951E2F7DD77E006ADAC6 /* RosterViewModel.swift */; };
+		95E795232F7DDAFE006ADAC6 /* RosterListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E795222F7DDAFE006ADAC6 /* RosterListView.swift */; };
+		95E795252F7DE1D5006ADAC6 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E795242F7DE1D5006ADAC6 /* Player.swift */; };
+/* End PBXBuildFile section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		95E794C02F7DC95B006ADAC6 /* MLB25 */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MLB25;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
+/* Begin PBXFileReference section */
+		95E0DA1D2F7DEDCF00CFDF78 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
+		95E0DA212F7DF34F00CFDF78 /* PlayerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerListView.swift; sourceTree = "<group>"; };
+		95E794BE2F7DC95B006ADAC6 /* MLB25.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLB25.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		95E795112F7DD574006ADAC6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		95E795122F7DD574006ADAC6 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
+		95E795132F7DD574006ADAC6 /* MLB25App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLB25App.swift; sourceTree = "<group>"; };
+		95E795142F7DD574006ADAC6 /* Roster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Roster.swift; sourceTree = "<group>"; };
+		95E795152F7DD574006ADAC6 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
+		95E795162F7DD574006ADAC6 /* TeamViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamViewModel.swift; sourceTree = "<group>"; };
+		95E7951E2F7DD77E006ADAC6 /* RosterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RosterViewModel.swift; sourceTree = "<group>"; };
+		95E795222F7DDAFE006ADAC6 /* RosterListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RosterListView.swift; sourceTree = "<group>"; };
+		95E795242F7DE1D5006ADAC6 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		95E794BB2F7DC95B006ADAC6 /* Frameworks */ = {
@@ -32,7 +49,7 @@
 		95E794B52F7DC95B006ADAC6 = {
 			isa = PBXGroup;
 			children = (
-				95E794C02F7DC95B006ADAC6 /* MLB25 */,
+				95E795172F7DD574006ADAC6 /* MLB25 */,
 				95E794BF2F7DC95B006ADAC6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +60,24 @@
 				95E794BE2F7DC95B006ADAC6 /* MLB25.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		95E795172F7DD574006ADAC6 /* MLB25 */ = {
+			isa = PBXGroup;
+			children = (
+				95E795112F7DD574006ADAC6 /* Assets.xcassets */,
+				95E795132F7DD574006ADAC6 /* MLB25App.swift */,
+				95E795152F7DD574006ADAC6 /* Team.swift */,
+				95E795162F7DD574006ADAC6 /* TeamViewModel.swift */,
+				95E795142F7DD574006ADAC6 /* Roster.swift */,
+				95E7951E2F7DD77E006ADAC6 /* RosterViewModel.swift */,
+				95E795242F7DE1D5006ADAC6 /* Player.swift */,
+				95E0DA1D2F7DEDCF00CFDF78 /* PlayerViewModel.swift */,
+				95E0DA212F7DF34F00CFDF78 /* PlayerListView.swift */,
+				95E795222F7DDAFE006ADAC6 /* RosterListView.swift */,
+				95E795122F7DD574006ADAC6 /* ListView.swift */,
+			);
+			path = MLB25;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -59,9 +94,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				95E794C02F7DC95B006ADAC6 /* MLB25 */,
 			);
 			name = MLB25;
 			packageProductDependencies = (
@@ -109,6 +141,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95E7951D2F7DD574006ADAC6 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +152,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95E0DA1E2F7DEDCF00CFDF78 /* PlayerViewModel.swift in Sources */,
+				95E795182F7DD574006ADAC6 /* ListView.swift in Sources */,
+				95E795192F7DD574006ADAC6 /* MLB25App.swift in Sources */,
+				95E795232F7DDAFE006ADAC6 /* RosterListView.swift in Sources */,
+				95E7951A2F7DD574006ADAC6 /* Roster.swift in Sources */,
+				95E0DA222F7DF34F00CFDF78 /* PlayerListView.swift in Sources */,
+				95E795252F7DE1D5006ADAC6 /* Player.swift in Sources */,
+				95E7951F2F7DD77E006ADAC6 /* RosterViewModel.swift in Sources */,
+				95E7951B2F7DD574006ADAC6 /* Team.swift in Sources */,
+				95E7951C2F7DD574006ADAC6 /* TeamViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
