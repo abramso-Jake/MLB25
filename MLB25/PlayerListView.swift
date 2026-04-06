@@ -60,6 +60,38 @@ struct PlayerListView: View {
                             .font(.title)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
+                        } else if (player.positionAbbreviation == "TWP"){
+                            VStack(alignment: .leading){
+                                if let pitching = playerVM.secondStatLine {
+                                    Text("Pitching:")
+                                        .font(.title3)
+                                        .fontWeight(.black)
+                                    Text("IP: \(pitching.inningsPitched ?? "-")")
+                                    Text("ERA: \(pitching.era ?? "-")")
+                                    Text("WHIP: \(pitching.whip ?? "-")")
+                                    Text("W: \(pitching.wins ?? 0)")
+                                    Text("L: \(pitching.losses ?? 0)")
+                                    Text("SO: \(pitching.strikeOuts ?? 0)")
+                                }
+                                if let hitting = playerVM.statLine{
+                                    Text("")
+                                    Text("Hitting:")
+                                        .font(.title3)
+                                        .fontWeight(.black)
+                                    Text("At Bats: \(hitting.atBats ?? 0)")
+                                    Text("Walks: \(hitting.baseOnBalls ?? 0)")
+                                    Text("Hits: \(hitting.hits ?? 0)")
+                                    let sb = (hitting.stolenBases ?? 0)
+                                    if sb >= 20{
+                                        Text("Stolen Bases: \(hitting.stolenBases ?? 0)")
+                                    }
+                                    Text("AVG: \(hitting.avg ?? "-")")
+                                    Text("HR: \(hitting.homeRuns ?? 0)")
+                                    Text("RBI: \(hitting.rbi ?? 0)")
+                                    Text("OPS: \(hitting.ops ?? "-")")
+                                    Text("SO: \(hitting.strikeOuts ?? 0)")
+                                }
+                            }
                         } else{
                             VStack(alignment: .leading) {
                                 Text("Games Played: \(stat.gamesPlayed ?? 0)")
@@ -145,5 +177,5 @@ extension PlayerListView{
 }
 
 #Preview {
-    PlayerListView(player: Roster(person: Person(id: 608331, fullName: "Max Fried", link: "/api/v1/people/608331"), position: Position(name: "Pitching", abbreviation: "P")))
+    PlayerListView(player: Roster(person: Person(id: 660271, fullName: "Shohei Ohtani", link: "/api/v1/people/660271"), position: Position(name: "Two-Way Player", abbreviation: "TWP")))
 }
