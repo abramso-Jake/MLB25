@@ -12,58 +12,93 @@ struct PlayerListView: View {
     @State private var playerVM = PlayerViewModel()
     @State private var selectedStat: StatSelection = .season2025
     var body: some View {
-        VStack{
-            Picker("Stats", selection: $selectedStat){
-                ForEach(StatSelection.allCases, id: \.displayName){option in
-                    Text(option.displayName).tag(option)
-                }
-            }
-            .pickerStyle(.segmented)
-            Spacer()
-            HStack{
-                PlayerImage
-                    .padding()
-                if playerVM.isLoading{
-                    ProgressView()
-                        .tint(.red)
-                        .scaleEffect(4)
-                } else if let stat = playerVM.statLine {
-                    if player.positionAbbreviation == "P"{
-                        VStack(alignment: .leading){
-                            Text("ERA: \(stat.era ?? "-")")
-                            Text("W: \(stat.wins ?? 0)")
-                            Text("L: \(stat.losses ?? 0)")
-                            Text("SO: \(stat.strikeOuts ?? 0)")
-                            Text("WHIP: \(stat.whip ?? "-")")
-                        }
-                        .font(.title)
-                    } else{
-                        VStack(alignment: .leading) {
-                            Text("AVG: \(stat.avg ?? "-")")
-                            Text("HR: \(stat.homeRuns ?? 0)")
-                            Text("RBI: \(stat.rbi ?? 0)")
-                            Text("OPS: \(stat.ops ?? "-")")
-                        }
-                        .font(.title)
+        NavigationStack{
+            VStack{
+                Picker("Stats", selection: $selectedStat){
+                    ForEach(StatSelection.allCases, id: \.displayName){option in
+                        Text(option.displayName).tag(option)
                     }
-                } else {
-                    Text(playerVM.errorMessage.isEmpty ? "No Stats Available." : playerVM.errorMessage)
                 }
-               
+                .pickerStyle(.segmented)
+                Spacer()
+                HStack{
+                    PlayerImage
+                        .padding()
+                    if playerVM.isLoading{
+                        ProgressView()
+                            .tint(.red)
+                            .scaleEffect(4)
+                    } else if let stat = playerVM.statLine {
+                        if player.positionAbbreviation == "P"{
+                            VStack(alignment: .leading){
+                                Text("Games Played: \(stat.gamesPlayed ?? 0)")
+                                Text("IP: \(stat.inningsPitched ?? "-")")
+                                Text("ERA: \(stat.era ?? "-")")
+                                Text("WHIP: \(stat.whip ?? "-")")
+                                Text("W: \(stat.wins ?? 0)")
+                                Text("L: \(stat.losses ?? 0)")
+                                Text("SO: \(stat.strikeOuts ?? 0)")
+                                let sv = (stat.saves ?? 0)
+                                if sv >= 1{
+                                    Text("SV: \(sv)")
+                                }
+                                Text("OBA: \(stat.avg ?? "-")")
+                                Text("Walks: \(stat.baseOnBalls ?? 0)")
+                                let cg = (stat.completeGames ?? 0)
+                                if cg >= 1{
+                                    Text("CG: \(cg)")
+                                }
+                                let sho = (stat.shutouts ?? 0)
+                                if sho >= 1{
+                                    Text("SHO: \(sho)")
+                                }
+                                let pick = (stat.pickoffs ?? 0)
+                                if pick >= 5{
+                                    Text("Pickoffs: \(pick)")
+                                }
+                            }
+                            .font(.title)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                        } else{
+                            VStack(alignment: .leading) {
+                                Text("Games Played: \(stat.gamesPlayed ?? 0)")
+                                Text("At Bats: \(stat.atBats ?? 0)")
+                                Text("Walks: \(stat.baseOnBalls ?? 0)")
+                                Text("Hits: \(stat.hits ?? 0)")
+                                let sb = (stat.stolenBases ?? 0)
+                                if sb >= 20{
+                                    Text("Stolen Bases: \(stat.stolenBases ?? 0)")
+                                }
+                                Text("AVG: \(stat.avg ?? "-")")
+                                Text("HR: \(stat.homeRuns ?? 0)")
+                                Text("RBI: \(stat.rbi ?? 0)")
+                                Text("OPS: \(stat.ops ?? "-")")
+                                Text("SO: \(stat.strikeOuts ?? 0)")
+                            }
+                            .font(.title)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
+                        }
+                    } else {
+                        Text(playerVM.errorMessage.isEmpty ? "No Stats Available." : playerVM.errorMessage)
+                    }
+                   
+                }
+                Spacer()
             }
-            Spacer()
-        }
-        .padding()
-        .navigationTitle(player.fullName)
-        .task{
-            await playerVM.getData(for: player, selection: selectedStat)
-        }
-        .onChange(of: selectedStat){
-            Task{
+            .padding()
+            .navigationTitle(player.fullName)
+            .task{
                 await playerVM.getData(for: player, selection: selectedStat)
             }
+            .onChange(of: selectedStat){
+                Task{
+                    await playerVM.getData(for: player, selection: selectedStat)
+                }
+            }
+            
         }
-        
     }
     
 }
@@ -76,7 +111,7 @@ extension PlayerListView{
                     .resizable()
                     .scaledToFit()
                     .background(.white)
-                    .frame(width: 100, height: 100)
+                    .frame(width: 150, height: 150)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(radius: 8, x: 5, y: 5)
                     .overlay {
@@ -110,5 +145,5 @@ extension PlayerListView{
 }
 
 #Preview {
-    PlayerListView(player: Roster(person: Person(id: 592450, fullName: "Aaron Judge", link: "/api/v1/people/592450"), position: Position(name: "Hitting", abbreviation: "RF")))
+    PlayerListView(player: Roster(person: Person(id: 608331, fullName: "Max Fried", link: "/api/v1/people/608331"), position: Position(name: "Pitching", abbreviation: "P")))
 }

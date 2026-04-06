@@ -43,4 +43,6 @@ struct PlayerStat: Codable {
     let losses: Int?
     let strikeOuts: Int?
     let whip: String?
+    let completeGames: Int?
+    let pickoffs: Int?
 }
