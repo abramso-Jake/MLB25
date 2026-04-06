@@ -21,6 +21,11 @@ struct Roster: Codable, Identifiable {
     var positionName: String { position.name }
     var positionAbbreviation: String { position.abbreviation }
 }
+extension Roster {
+    var headshotURL: URL? {
+        URL(string: "https://img.mlbstatic.com/mlb-photos/image/upload/w_213,q_auto:best/v1/people/\(id)/headshot/67/current")
+    }
+}
 
 struct Person: Codable {
     let id: Int
