@@ -11,7 +11,9 @@ import SwiftUI
 struct MLB25App: App {
     var body: some Scene {
         WindowGroup {
-            ListView()
+            NavigationStack{
+                FrontView()
+            }
         }
     }
 }

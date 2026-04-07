@@ -72,6 +72,8 @@ struct PlayerListView: View {
                                     Text("W: \(pitching.wins ?? 0)")
                                     Text("L: \(pitching.losses ?? 0)")
                                     Text("SO: \(pitching.strikeOuts ?? 0)")
+                                    Text("OBA: \(pitching.avg ?? "-")")
+                                    Text("Walks: \(pitching.baseOnBalls ?? 0)")
                                 }
                                 if let hitting = playerVM.statLine{
                                     Text("")
@@ -120,7 +122,17 @@ struct PlayerListView: View {
                 Spacer()
             }
             .padding()
-            .navigationTitle(player.fullName)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("") // suppress default
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("\(player.fullName)- \(player.positionAbbreviation)")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                }
+            }
             .task{
                 await playerVM.getData(for: player, selection: selectedStat)
             }

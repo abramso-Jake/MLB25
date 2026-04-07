@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ListView: View {
+struct TeamView: View {
     @State private var teamsVM = TeamViewModel()
     var body: some View {
         NavigationStack{
@@ -40,5 +40,5 @@ struct ListView: View {
 }
 
 #Preview {
-    ListView()
+    TeamView()
 }
