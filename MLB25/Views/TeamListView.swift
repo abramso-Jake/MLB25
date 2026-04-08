@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-struct TeamView: View {
+struct TeamListView: View {
     @State private var teamsVM = TeamViewModel()
+    @Environment(\.dismiss) var dismiss
     var body: some View {
         NavigationStack{
             ZStack{
@@ -31,7 +32,13 @@ struct TeamView: View {
                         .scaleEffect(4)
                 }
             }
-
+            .toolbar{
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("", systemImage: "chevron.left", role: .close) {
+                        dismiss()
+                    }
+                }
+            }
             
         }
         
@@ -40,5 +47,5 @@ struct TeamView: View {
 }
 
 #Preview {
-    TeamView()
+    TeamListView()
 }

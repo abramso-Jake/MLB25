@@ -46,3 +46,15 @@ struct PlayerStat: Codable {
     let completeGames: Int?
     let pickoffs: Int?
 }
+
+struct YearByYearArray: Codable {
+    let stats: [YearByYear]
+}
+
+struct YearByYear: Codable {
+    let splits: [YearByYearSplit]
+}
+
+struct YearByYearSplit: Codable {
+    let season: String?
+}

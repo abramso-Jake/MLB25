@@ -7,39 +7,37 @@
 
 import Foundation
 
-enum StatSelection: CaseIterable, Hashable {
-    case season2026
-    case season2025
+enum PlayerEntry {
+    case roster
+    case search
+}
+
+enum PlayerStatSelection: Hashable {
     case career
-    
-    var statsValue: String {
-        switch self {
-        case .season2026, .season2025:
-            return "season"
-        case .career:
-            return "career"
-        }
-    }
-    
-    var seasonValue: Int? {
-        switch self {
-        case .season2026:
-            return 2026
-        case .season2025:
-            return 2025
-        case .career:
-            return nil
-        }
-    }
+    case season(String)
     
     var displayName: String {
-        switch self {
-        case .season2026:
-            return "2026"
-        case .season2025:
-            return "2025"
+        switch self{
         case .career:
             return "Career"
+        case .season(let year):
+            return year
+        }
+    }
+    var statsValue: String {
+        switch self {
+        case .career:
+            return "career"
+        case .season:
+            return "season"
+        }
+    }
+    var seasonValue: String? {
+        switch self {
+        case .career:
+            return nil
+        case .season(let year):
+            return year
         }
     }
 }
@@ -51,9 +49,10 @@ class PlayerViewModel{
     var secondStatLine: PlayerStat?
     var isLoading = false
     var errorMessage = ""
+    var availableSeasons: [String] = []
     
     
-    func getData(for player: Roster, selection: StatSelection) async { //Put function on guide
+    func getData(for player: Roster, selection: PlayerStatSelection) async { //Put function on guide
         isLoading = true
         errorMessage = ""
         statLine = nil
@@ -158,5 +157,36 @@ class PlayerViewModel{
         
     }
     
+    func getAvailableSeasons(playerId: Int, position: String) async {
+        let group = position == "P" ? "pitching" : "hitting"
+        let urlString = "https://statsapi.mlb.com/api/v1/people/\(playerId)/stats?stats=yearByYear&group=\(group)"
+
+        guard let url = URL(string: urlString) else { return }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(YearByYearArray.self, from: data)
+            let seasons = response.stats.first?.splits.compactMap { $0.season } ?? []
+            self.availableSeasons = Array(Set(seasons)).sorted(by: >)
+        } catch {
+            print("ERROR loading available seasons: \(error.localizedDescription)")
+        }
+    }
+    
+    func defaultSelection( for player: Roster, entryMode: PlayerEntry) -> PlayerStatSelection {
+        switch entryMode {
+        case .roster:
+            if availableSeasons.contains("2026") {
+                return .season("2026")
+            } else if let mostRecent = availableSeasons.sorted(by: >).first {
+                return .season(mostRecent)
+            } else {
+                return .career
+            }
+
+        case .search:
+            return .career
+        }
+    }
     
 }

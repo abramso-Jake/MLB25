@@ -10,34 +10,70 @@ import SwiftUI
 struct RosterListView: View {
     let team: Team
     @State private var rosterVM = RosterViewModel()
+
+    var pitchers: [Roster] {
+        rosterVM.roster.filter { $0.positionAbbreviation == "P" }
+    }
+
+    var hitters: [Roster] {
+        rosterVM.roster.filter { $0.positionAbbreviation != "P" }
+    }
+
     var body: some View {
-        NavigationStack{
-            ZStack{
-                List(rosterVM.roster) {player in
-                    NavigationLink{
-                        PlayerListView(player: player)
-                    } label:{
-                        VStack(alignment: .leading){
-                            Text(player.fullName)
-                                .font(.title3)
-                            Text(player.positionName)
-                                .font(.subheadline)
+        NavigationStack {
+            ZStack {
+                List {
+                    Section(header:
+                        Text("Pitchers:")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                    ){
+                        ForEach(pitchers) { player in
+                            NavigationLink {
+                                PlayerListView(player: player, entry: .roster)
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    Text(player.fullName)
+                                        .font(.title3)
+                                    Text(player.positionName)
+                                        .font(.subheadline)
+                                }
+                            }
+                        }
+                    }
+                    Section(header:
+                        Text("Hitters:")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                    ){
+                        ForEach(hitters) { player in
+                            NavigationLink {
+                                PlayerListView(player: player, entry: .roster)
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    Text(player.fullName)
+                                        .font(.title3)
+                                    Text(player.positionName)
+                                        .font(.subheadline)
+                                }
+                            }
                         }
                     }
                 }
                 .listStyle(.plain)
                 .navigationTitle(team.name)
-                .task{
+                .task {
                     await rosterVM.getData(for: team)
                 }
-                if rosterVM.isLoading{
+
+                if rosterVM.isLoading {
                     ProgressView()
                         .tint(.red)
                         .scaleEffect(4)
                 }
             }
-            
-            
         }
     }
 }

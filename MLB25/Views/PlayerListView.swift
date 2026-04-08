@@ -9,17 +9,21 @@ import SwiftUI
 
 struct PlayerListView: View {
     let player: Roster
+    let entry: PlayerEntry
+    
     @State private var playerVM = PlayerViewModel()
-    @State private var selectedStat: StatSelection = .season2025
+    @State private var selectedStat: PlayerStatSelection = .career
     var body: some View {
         NavigationStack{
             VStack{
-                Picker("Stats", selection: $selectedStat){
-                    ForEach(StatSelection.allCases, id: \.displayName){option in
-                        Text(option.displayName).tag(option)
+                Picker("Stats", selection: $selectedStat) {
+                    Text("Career").tag(PlayerStatSelection.career)
+
+                    ForEach(playerVM.availableSeasons, id: \.self) { season in
+                        Text(season).tag(PlayerStatSelection.season(season))
                     }
                 }
-                .pickerStyle(.segmented)
+                .pickerStyle(.menu)
                 Spacer()
                 HStack{
                     PlayerImage
@@ -134,6 +138,11 @@ struct PlayerListView: View {
                 }
             }
             .task{
+                await playerVM.getAvailableSeasons(
+                    playerId: player.id,
+                    position: player.positionAbbreviation
+                )
+                selectedStat = playerVM.defaultSelection(for: player, entryMode: entry)
                 await playerVM.getData(for: player, selection: selectedStat)
             }
             .onChange(of: selectedStat){
@@ -189,5 +198,5 @@ extension PlayerListView{
 }
 
 #Preview {
-    PlayerListView(player: Roster(person: Person(id: 660271, fullName: "Shohei Ohtani", link: "/api/v1/people/660271"), position: Position(name: "Two-Way Player", abbreviation: "TWP")))
+    PlayerListView(player: Roster(person: Person(id: 660271, fullName: "Shohei Ohtani", link: "/api/v1/people/660271"), position: Position(name: "Two-Way Player", abbreviation: "TWP")), entry: .roster)
 }

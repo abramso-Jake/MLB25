@@ -16,8 +16,18 @@ class SearchViewModel{
     var isLoading = false
     var errorMessage = ""
     
+    enum SearchStatSelection: Hashable{
+        case career
+        case season(String)
+    }
+    
     func searchPlayers() async {
         guard !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            results = []
+            isLoading = false
+            return
+        }
+        guard searchText.count >= 3 else {
             results = []
             isLoading = false
             return

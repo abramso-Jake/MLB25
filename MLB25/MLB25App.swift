@@ -12,7 +12,7 @@ struct MLB25App: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack{
-                FrontView()
+                FrontListView()
             }
         }
     }

@@ -7,20 +7,25 @@
 
 import SwiftUI
 
-struct SearchView: View {
+struct SearchListView: View {
     @State private var searchVM = SearchViewModel()
+    @Environment(\.dismiss) var dismiss
     var body: some View {
         NavigationStack{
             VStack{
                 HStack{
                     TextField("Search Player", text: $searchVM.searchText)
                         .textFieldStyle(.roundedBorder)
-                    
-                    Button("Search"){
-                        Task{
-                            await searchVM.searchPlayers()
+                        .overlay{
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(.gray, lineWidth: 2)
+                                .autocorrectionDisabled()
                         }
-                    }
+                        .onChange(of: searchVM.searchText) {
+                            Task {
+                                await searchVM.searchPlayers()
+                            }
+                        }
                 }
                 .padding()
                 
@@ -47,7 +52,8 @@ struct SearchView: View {
                                         name: player.positionName,
                                         abbreviation: player.positionAbbreviation
                                     )
-                                )
+                                ),
+                                entry: .search
                             )
                         } label: {
                             VStack(alignment: .leading) {
@@ -58,12 +64,22 @@ struct SearchView: View {
                             }
                         }
                     }
+                    .listStyle(.plain)
+                    
                 }
             }
+            .toolbar{
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("", systemImage: "chevron.left", role: .close) {
+                        dismiss()
+                    }
+                }
+            }
+            .navigationTitle("Player Search:")
         }
     }
 }
 
 #Preview {
-    SearchView()
+    SearchListView()
 }
