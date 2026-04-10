@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RosterListView: View {
     let team: Team
+    let record: String
     @State private var rosterVM = RosterViewModel()
 
     var pitchers: [Roster] {
@@ -26,8 +27,9 @@ struct RosterListView: View {
                     Section(header:
                         Text("Pitchers:")
                             .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
+                            .tint(.black)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.primary)
                     ){
                         ForEach(pitchers) { player in
                             NavigationLink {
@@ -45,8 +47,9 @@ struct RosterListView: View {
                     Section(header:
                         Text("Hitters:")
                             .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
+                            .tint(.black)
+                            .fontWeight(.medium)
+                            .foregroundStyle(.primary)
                     ){
                         ForEach(hitters) { player in
                             NavigationLink {
@@ -63,7 +66,8 @@ struct RosterListView: View {
                     }
                 }
                 .listStyle(.plain)
-                .navigationTitle(team.name)
+                .navigationTitle("\(team.name): \(record)")
+                
                 .task {
                     await rosterVM.getData(for: team)
                 }
@@ -79,5 +83,5 @@ struct RosterListView: View {
 }
 
 #Preview {
-    RosterListView(team: Team(id: 133, name: "Athletics" , link: "https://statsapi.mlb.com/api/v1/teams/133/roster"))
+    RosterListView(team: Team(id: 133, name: "Athletics" , link: "https://statsapi.mlb.com/api/v1/teams/133/roster"), record: "8-5")
 }

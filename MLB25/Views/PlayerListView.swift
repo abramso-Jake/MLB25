@@ -39,6 +39,7 @@ struct PlayerListView: View {
                                 Text("IP: \(stat.inningsPitched ?? "-")")
                                 Text("ERA: \(stat.era ?? "-")")
                                 Text("WHIP: \(stat.whip ?? "-")")
+                                Text("ER: \(stat.earnedRuns ?? 0)")
                                 Text("W: \(stat.wins ?? 0)")
                                 Text("L: \(stat.losses ?? 0)")
                                 Text("SO: \(stat.strikeOuts ?? 0)")
@@ -64,15 +65,17 @@ struct PlayerListView: View {
                             .font(.title)
                             .minimumScaleFactor(0.5)
                             .lineLimit(1)
-                        } else if (player.positionAbbreviation == "TWP"){
+                        } else if (player.positionAbbreviation == "TWP" || player.fullName == "Babe Ruth"){
                             VStack(alignment: .leading){
                                 if let pitching = playerVM.secondStatLine {
                                     Text("Pitching:")
                                         .font(.title3)
                                         .fontWeight(.black)
+                                    Text("Games Played: \(pitching.gamesPlayed ?? 0)")
                                     Text("IP: \(pitching.inningsPitched ?? "-")")
                                     Text("ERA: \(pitching.era ?? "-")")
                                     Text("WHIP: \(pitching.whip ?? "-")")
+                                    Text("ER: \(pitching.earnedRuns ?? 0)")
                                     Text("W: \(pitching.wins ?? 0)")
                                     Text("L: \(pitching.losses ?? 0)")
                                     Text("SO: \(pitching.strikeOuts ?? 0)")
@@ -100,7 +103,6 @@ struct PlayerListView: View {
                             }
                         } else{
                             VStack(alignment: .leading) {
-                                Text("Games Played: \(stat.gamesPlayed ?? 0)")
                                 Text("At Bats: \(stat.atBats ?? 0)")
                                 Text("Walks: \(stat.baseOnBalls ?? 0)")
                                 Text("Hits: \(stat.hits ?? 0)")

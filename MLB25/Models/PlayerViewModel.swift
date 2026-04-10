@@ -58,10 +58,10 @@ class PlayerViewModel{
         statLine = nil
         secondStatLine = nil
         
-        let isShohei = (player.id == 660271)
+        let exception = (player.id == 660271 || player.id == 121578)
         
         do{
-            if isShohei{
+            if exception{
                 var hittingURL = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=\(selection.statsValue)&group=hitting"
                 var pitchingURL = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=\(selection.statsValue)&group=pitching"
                 

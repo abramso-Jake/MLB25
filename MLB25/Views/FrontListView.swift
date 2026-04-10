@@ -57,7 +57,7 @@ struct FrontListView: View {
             case .team:
                 TeamListView()
             case .leader:
-                LeaderListView()
+                LeadersListView()
             case .search:
                 SearchListView()
             }

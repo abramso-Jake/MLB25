@@ -15,9 +15,9 @@ struct TeamListView: View {
             ZStack{
                 List(teamsVM.teams) { team in
                     NavigationLink {
-                        RosterListView(team: team)
+                        RosterListView(team: team, record: teamsVM.recordsByTeamID[team.id] ?? "--" )
                     } label:{
-                        Text("\(teamsVM.returnIndex(of: team)). \(team.name)")
+                        Text("\(teamsVM.returnIndex(of: team)). \(team.name): \(teamsVM.recordsByTeamID[team.id] ?? "--")")
                             .font(.title2)
                     }
                 }
@@ -25,6 +25,7 @@ struct TeamListView: View {
                 .navigationTitle("MLB Teams:")
                 .task{
                     await teamsVM.getData()
+                    await teamsVM.getRecords(for: 2026)
                 }
                 if teamsVM.isLoading{
                     ProgressView()

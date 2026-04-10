@@ -13,6 +13,7 @@ class TeamViewModel{
     var teams: [Team] = []
     let urlString = "https://statsapi.mlb.com/api/v1/teams?sportId=1"
     var isLoading = false
+    var recordsByTeamID: [Int: String] = [:]
     
     func getData() async { //Put function on guide
         isLoading = true
@@ -41,6 +42,33 @@ class TeamViewModel{
     func returnIndex(of team: Team)-> Int{
         guard let index = teams.firstIndex(where: {$0.id == team.id}) else {return 0}
         return index + 1
+    }
+    func getRecords(for season: Int = 2026) async {
+        let urlString = "https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=\(season)&standingsTypes=regularSeason"
+
+        guard let url = URL(string: urlString) else {
+            print("ERROR: bad standings URL")
+            return
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(StandingsArray.self, from: data)
+
+            var temp: [Int: String] = [:]
+
+            for recordGroup in response.records {
+                for teamRecord in recordGroup.teamRecords {
+                    let wins = teamRecord.leagueRecord.wins
+                    let losses = teamRecord.leagueRecord.losses
+                    temp[teamRecord.team.id] = "\(wins)-\(losses)"
+                }
+            }
+
+            self.recordsByTeamID = temp
+        } catch {
+            print("ERROR loading records: \(error.localizedDescription)")
+        }
     }
    
 }
