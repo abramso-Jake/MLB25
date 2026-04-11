@@ -66,7 +66,17 @@ struct RosterListView: View {
                     }
                 }
                 .listStyle(.plain)
-                .navigationTitle("\(team.name): \(record)")
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("") // suppress default
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("\(team.name): \(record)")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                    }
+                }
                 
                 .task {
                     await rosterVM.getData(for: team)

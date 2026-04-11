@@ -81,6 +81,14 @@ struct PlayerListView: View {
                                     Text("SO: \(pitching.strikeOuts ?? 0)")
                                     Text("OBA: \(pitching.avg ?? "-")")
                                     Text("Walks: \(pitching.baseOnBalls ?? 0)")
+                                    let cg = (stat.completeGames ?? 0)
+                                    if cg >= 1{
+                                        Text("CG: \(cg)")
+                                    }
+                                    let sho = (stat.shutouts ?? 0)
+                                    if sho >= 1{
+                                        Text("SHO: \(sho)")
+                                    }
                                 }
                                 if let hitting = playerVM.statLine{
                                     Text("")
