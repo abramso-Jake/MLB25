@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TeamListView: View {
     @State private var teamsVM = TeamViewModel()
+    @State private var searchText = ""
     @Environment(\.dismiss) var dismiss
     var body: some View {
         NavigationStack{
@@ -21,6 +22,7 @@ struct TeamListView: View {
                             .font(.title2)
                     }
                 }
+                
                 .listStyle(.plain)
                 .navigationTitle("MLB Teams:")
                 .task{
@@ -32,6 +34,7 @@ struct TeamListView: View {
                         .tint(.red)
                         .scaleEffect(4)
                 }
+                
             }
             .toolbar{
                 ToolbarItem(placement: .cancellationAction) {
@@ -40,6 +43,7 @@ struct TeamListView: View {
                     }
                 }
             }
+           
             
         }
         

@@ -11,23 +11,193 @@ struct PlayerListView: View {
     let player: Roster
     let entry: PlayerEntry
     
+    private var isPitcherOnly: Bool {
+        player.positionAbbreviation == "P"
+    }
+    
+    private var isTwoWay: Bool {
+        player.positionAbbreviation == "TWP"
+    }
+    
+    private var isHitterOnly: Bool {
+        !isPitcherOnly && !isTwoWay
+    }
+    
+    @State private var selectedHitterSplit: HitterSplitSelection = .overall
+    @State private var selectedPitcherSplit: PitcherSplitSelection = .overall
     @State private var playerVM = PlayerViewModel()
     @State private var selectedStat: PlayerStatSelection = .career
     var body: some View {
         NavigationStack{
             VStack{
-                Picker("Stats", selection: $selectedStat) {
-                    Text("Career").tag(PlayerStatSelection.career)
+                HStack {
+                    Picker("Stats", selection: $selectedStat) {
+                        Text("Career").tag(PlayerStatSelection.career)
+                        
+                        ForEach(playerVM.availableSeasons, id: \.self) { season in
+                            Text(season).tag(PlayerStatSelection.season(season))
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: selectedStat) {
+                        if case .career = selectedStat {
+                            selectedHitterSplit = .overall
+                            selectedPitcherSplit = .overall
+                        }
+                        
+                        Task {
+                            await playerVM.getData(for: player, selection: selectedStat)
+                        }
+                    }
+                    
+                    if case .season = selectedStat {
+                        if isPitcherOnly {
+                            Picker("Split", selection: $selectedPitcherSplit) {
+                                ForEach(PitcherSplitSelection.allCases) { split in
+                                    Text(split.rawValue).tag(split)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .onChange(of: selectedPitcherSplit) {
+                                if case let .season(season) = selectedStat {
+                                    Task {
+                                        await playerVM.getPitcherSplitStats(
+                                            for: player,
+                                            season: season,
+                                            sitCode: selectedPitcherSplit.sitCode
+                                        )
+                                    }
+                                }
+                            }
+                        } else if isHitterOnly {
+                            Picker("Split", selection: $selectedHitterSplit) {
+                                ForEach(HitterSplitSelection.allCases) { split in
+                                    Text(split.rawValue).tag(split)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .onChange(of: selectedHitterSplit) {
+                                if case let .season(season) = selectedStat {
+                                    Task {
+                                        await playerVM.getHitterSplitStats(
+                                            for: player,
+                                            season: season,
+                                            sitCode: selectedHitterSplit.sitCode
+                                        )
+                                    }
+                                }
+                            }
+                        } else if isTwoWay, case .season = selectedStat {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Picker("Hitting Split", selection: $selectedHitterSplit) {
+                                    ForEach(HitterSplitSelection.allCases) { split in
+                                        Text(split.rawValue).tag(split)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .onChange(of: selectedHitterSplit) {
+                                    if case let .season(season) = selectedStat {
+                                        Task {
+                                            await playerVM.getHitterSplitStats(
+                                                for: player,
+                                                season: season,
+                                                sitCode: selectedHitterSplit.sitCode
+                                            )
+                                        }
+                                    }
+                                }
 
-                    ForEach(playerVM.availableSeasons, id: \.self) { season in
-                        Text(season).tag(PlayerStatSelection.season(season))
+                                Picker("Pitching Split", selection: $selectedPitcherSplit) {
+                                    ForEach(PitcherSplitSelection.allCases) { split in
+                                        Text(split.rawValue).tag(split)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .onChange(of: selectedPitcherSplit) {
+                                    if case let .season(season) = selectedStat {
+                                        Task {
+                                            await playerVM.getTwoWayPitcherSplitStats(
+                                                for: player,
+                                                season: season,
+                                                sitCode: selectedPitcherSplit.sitCode
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                .pickerStyle(.menu)
                 Spacer()
                 HStack{
-                    PlayerImage
-                        .padding()
+                    VStack(alignment: .leading, spacing: 6) {
+                        if let details = playerVM.playerDetails {
+                            if case let .season(season) = selectedStat,
+                               let teamName = playerVM.teamName(for: season) {
+                                Text("Team: \(teamName)")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
+                            }
+                            if let active = details.active {
+                                Text(active ? "Status: Active" : "Status: Inactive")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                            }
+                            if details.active == true, let age = details.currentAge {
+                                Text("Age: \(age)")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                            }
+                            if let throwHand = details.pitchHand?.description {
+                                Text("Throws: \(throwHand)")
+                                    .font(.subheadline)
+                            }
+                            if let batSide = details.batSide?.description {
+                                Text("Bats: \(batSide)")
+                                    .font(.subheadline)
+                            }
+                        }
+                        
+                        PlayerImage
+                            .padding(.vertical)
+                            .offset(y: 20)
+                        if case .career = selectedStat, !playerVM.majorAwards.isEmpty {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Awards")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+
+                                ForEach(playerVM.majorAwards) { award in
+                                    let awardName = award.name ?? "Award"
+                                    let count = playerVM.awardCount(for: awardName)
+
+                                    Text("\(award.season ?? "") – \(awardName) (\(count)x career)")
+                                        .font(.subheadline)
+                                }
+                            }
+                            .padding(.top, 8)
+                        }
+                        if case let .season(season) = selectedStat {
+                            let seasonAwards = playerVM.awards(for: season)
+
+                            if !seasonAwards.isEmpty {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("Awards")
+                                        .font(.title3)
+                                        .fontWeight(.bold)
+
+                                    ForEach(seasonAwards) { award in
+                                        Text(award.name ?? "Award")
+                                            .font(.subheadline)
+                                    }
+                                }
+                                .padding(.top, 8)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
                     if playerVM.isLoading{
                         ProgressView()
                             .tint(.red)
@@ -35,31 +205,40 @@ struct PlayerListView: View {
                     } else if let stat = playerVM.statLine {
                         if player.positionAbbreviation == "P"{
                             VStack(alignment: .leading){
-                                Text("Games Played: \(stat.gamesPlayed ?? 0)")
-                                Text("IP: \(stat.inningsPitched ?? "-")")
-                                Text("ERA: \(stat.era ?? "-")")
-                                Text("WHIP: \(stat.whip ?? "-")")
-                                Text("ER: \(stat.earnedRuns ?? 0)")
-                                Text("W: \(stat.wins ?? 0)")
-                                Text("L: \(stat.losses ?? 0)")
-                                Text("SO: \(stat.strikeOuts ?? 0)")
-                                let sv = (stat.saves ?? 0)
-                                if sv >= 1{
-                                    Text("SV: \(sv)")
-                                }
-                                Text("OBA: \(stat.avg ?? "-")")
-                                Text("Walks: \(stat.baseOnBalls ?? 0)")
-                                let cg = (stat.completeGames ?? 0)
-                                if cg >= 1{
-                                    Text("CG: \(cg)")
-                                }
-                                let sho = (stat.shutouts ?? 0)
-                                if sho >= 1{
-                                    Text("SHO: \(sho)")
-                                }
-                                let pick = (stat.pickoffs ?? 0)
-                                if pick >= 5{
-                                    Text("Pickoffs: \(pick)")
+                                if selectedPitcherSplit == .overall {
+                                    Text("Games Played: \(stat.gamesPlayed ?? 0)")
+                                    Text("IP: \(stat.inningsPitched ?? "-")")
+                                    Text("ERA: \(stat.era ?? "-")")
+                                    Text("WHIP: \(stat.whip ?? "-")")
+                                    Text("ER: \(stat.earnedRuns ?? 0)")
+                                    Text("W: \(stat.wins ?? 0)")
+                                    Text("L: \(stat.losses ?? 0)")
+                                    Text("SO: \(stat.strikeOuts ?? 0)")
+                                    let sv = (stat.saves ?? 0)
+                                    if sv >= 1{
+                                        Text("SV: \(sv)")
+                                    }
+                                    Text("OBA: \(stat.avg ?? "-")")
+                                    Text("Walks: \(stat.baseOnBalls ?? 0)")
+                                    let cg = (stat.completeGames ?? 0)
+                                    if cg >= 1{
+                                        Text("CG: \(cg)")
+                                    }
+                                    let sho = (stat.shutouts ?? 0)
+                                    if sho >= 1{
+                                        Text("SHO: \(sho)")
+                                    }
+                                    let pick = (stat.pickoffs ?? 0)
+                                    if pick >= 5{
+                                        Text("Pickoffs: \(pick)")
+                                    }
+                                }else {
+                                    Text("At Bats: \(stat.atBats ?? 0)")
+                                    Text("OBA: \(stat.avg ?? "-")")
+                                    Text("WHIP: \(stat.whip ?? "-")")
+                                    Text("Walks: \(stat.baseOnBalls ?? 0)")
+                                    Text("Hits: \(stat.hits ?? 0)")
+                                    Text("SO: \(stat.strikeOuts ?? 0)")
                                 }
                             }
                             .font(.title)
@@ -71,23 +250,32 @@ struct PlayerListView: View {
                                     Text("Pitching:")
                                         .font(.title3)
                                         .fontWeight(.black)
-                                    Text("Games Played: \(pitching.gamesPlayed ?? 0)")
-                                    Text("IP: \(pitching.inningsPitched ?? "-")")
-                                    Text("ERA: \(pitching.era ?? "-")")
-                                    Text("WHIP: \(pitching.whip ?? "-")")
-                                    Text("ER: \(pitching.earnedRuns ?? 0)")
-                                    Text("W: \(pitching.wins ?? 0)")
-                                    Text("L: \(pitching.losses ?? 0)")
-                                    Text("SO: \(pitching.strikeOuts ?? 0)")
-                                    Text("OBA: \(pitching.avg ?? "-")")
-                                    Text("Walks: \(pitching.baseOnBalls ?? 0)")
-                                    let cg = (stat.completeGames ?? 0)
-                                    if cg >= 1{
-                                        Text("CG: \(cg)")
-                                    }
-                                    let sho = (stat.shutouts ?? 0)
-                                    if sho >= 1{
-                                        Text("SHO: \(sho)")
+                                    if selectedPitcherSplit == .overall{
+                                        Text("Games Played: \(pitching.gamesPlayed ?? 0)")
+                                        Text("IP: \(pitching.inningsPitched ?? "-")")
+                                        Text("ERA: \(pitching.era ?? "-")")
+                                        Text("WHIP: \(pitching.whip ?? "-")")
+                                        Text("ER: \(pitching.earnedRuns ?? 0)")
+                                        Text("W: \(pitching.wins ?? 0)")
+                                        Text("L: \(pitching.losses ?? 0)")
+                                        Text("SO: \(pitching.strikeOuts ?? 0)")
+                                        Text("OBA: \(pitching.avg ?? "-")")
+                                        Text("Walks: \(pitching.baseOnBalls ?? 0)")
+                                        let cg = (pitching.completeGames ?? 0)
+                                        if cg >= 1{
+                                            Text("CG: \(cg)")
+                                        }
+                                        let sho = (pitching.shutouts ?? 0)
+                                        if sho >= 1{
+                                            Text("SHO: \(sho)")
+                                        }
+                                    } else {
+                                        Text("At Bats: \(pitching.atBats ?? 0)")
+                                        Text("OBA: \(pitching.avg ?? "-")")
+                                        Text("WHIP: \(pitching.whip ?? "-")")
+                                        Text("Walks: \(pitching.baseOnBalls ?? 0)")
+                                        Text("Hits: \(pitching.hits ?? 0)")
+                                        Text("SO: \(pitching.strikeOuts ?? 0)")
                                     }
                                 }
                                 if let hitting = playerVM.statLine{
@@ -103,6 +291,7 @@ struct PlayerListView: View {
                                         Text("Stolen Bases: \(hitting.stolenBases ?? 0)")
                                     }
                                     Text("AVG: \(hitting.avg ?? "-")")
+                                    Text("OBP: \(stat.obp ?? "-")")
                                     Text("HR: \(hitting.homeRuns ?? 0)")
                                     Text("RBI: \(hitting.rbi ?? 0)")
                                     Text("OPS: \(hitting.ops ?? "-")")
@@ -119,6 +308,7 @@ struct PlayerListView: View {
                                     Text("Stolen Bases: \(stat.stolenBases ?? 0)")
                                 }
                                 Text("AVG: \(stat.avg ?? "-")")
+                                Text("OBP: \(stat.obp ?? "-")")
                                 Text("HR: \(stat.homeRuns ?? 0)")
                                 Text("RBI: \(stat.rbi ?? 0)")
                                 Text("OPS: \(stat.ops ?? "-")")
@@ -131,7 +321,8 @@ struct PlayerListView: View {
                     } else {
                         Text(playerVM.errorMessage.isEmpty ? "No Stats Available." : playerVM.errorMessage)
                     }
-                   
+                    
+                    
                 }
                 Spacer()
             }
@@ -148,17 +339,14 @@ struct PlayerListView: View {
                 }
             }
             .task{
+                await playerVM.getAwards(for: player)
+                await playerVM.getPlayerDetails(for: player)
                 await playerVM.getAvailableSeasons(
                     playerId: player.id,
                     position: player.positionAbbreviation
                 )
                 selectedStat = playerVM.defaultSelection(for: player, entryMode: entry)
                 await playerVM.getData(for: player, selection: selectedStat)
-            }
-            .onChange(of: selectedStat){
-                Task{
-                    await playerVM.getData(for: player, selection: selectedStat)
-                }
             }
             
         }
@@ -174,7 +362,7 @@ extension PlayerListView{
                     .resizable()
                     .scaledToFit()
                     .background(.white)
-                    .frame(width: 150, height: 150)
+                    .frame(width: 100, height: 150)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .shadow(radius: 8, x: 5, y: 5)
                     .overlay {
@@ -194,8 +382,6 @@ extension PlayerListView{
                             .stroke(.gray.opacity(0.5), lineWidth: 1)
                     }
             } else {
-//                        RoundedRectangle(cornerRadius: 10)
-//                            .foregroundStyle(.clear)
                 ProgressView()
                     .tint(.red)
                     .scaleEffect(4)

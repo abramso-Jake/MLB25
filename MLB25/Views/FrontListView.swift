@@ -12,6 +12,7 @@ struct FrontListView: View {
         case team
         case leader
         case search
+        case chat
         
         var id: Self { self }
     }
@@ -33,7 +34,7 @@ struct FrontListView: View {
                 Button {
                     selectedView = .team
                 } label: {
-                    Text("Teams/Roster")
+                    Text("Teams")
                 }
 
                 Button {
@@ -46,6 +47,12 @@ struct FrontListView: View {
                     selectedView = .search
                 } label: {
                     Text("Search")
+                }
+                
+                Button {
+                    selectedView = .chat
+                } label: {
+                    Text("Chat")
                 }
             }
             .buttonStyle(.glassProminent)
@@ -60,6 +67,8 @@ struct FrontListView: View {
                 LeadersListView()
             case .search:
                 SearchListView()
+            case .chat:
+                ChatListView()
             }
         }
             

@@ -33,6 +33,7 @@ struct PlayerStat: Codable {
     let baseOnBalls: Int?
     let atBats: Int?
     
+    
     // Pitching
     let shutouts: Int?
     let saves: Int?
@@ -58,4 +59,85 @@ struct YearByYear: Codable {
 
 struct YearByYearSplit: Codable {
     let season: String?
+    let team: YearByYearTeam?
 }
+    
+struct YearByYearTeam: Codable {
+    let id: Int?
+    let name: String?
+}
+
+struct PlayerDetailsArray: Codable {
+    let people: [PlayerDetails]
+}
+
+struct PlayerDetails: Codable {
+    let id: Int
+    let fullName: String
+    let currentAge: Int?
+    let active: Bool?
+    let batSide: HandSide?
+    let pitchHand: HandSide?
+    let status: PlayerStatus?
+}
+
+struct HandSide: Codable {
+    let code: String?
+    let description: String?
+}
+
+struct PlayerStatus: Codable {
+    let code: String?
+    let description: String?
+}
+
+struct SplitStatsArray: Codable {
+    let stats: [SplitStatsContainer]
+}
+
+struct SplitStatsContainer: Codable {
+    let splits: [SplitStatSplit]
+}
+
+struct SplitStatSplit: Codable {
+    let split: SplitType
+    let stat: PlayerStat
+}
+
+struct SplitType: Codable {
+    let code: String
+    let description: String
+}
+
+struct AwardsResponse: Codable {
+    let awards: [PlayerAward]
+}
+
+struct PlayerAward: Codable, Identifiable {
+    let id: String
+    let name: String?
+    let date: String?
+    let season: String?
+    let team: AwardTeam?
+    let player: AwardPlayer?
+}
+
+struct AwardTeam: Codable {
+    let id: Int?
+    let link: String?
+    let teamName: String?
+}
+
+struct AwardPlayer: Codable {
+    let id: Int?
+    let link: String?
+    let primaryPosition: AwardPosition?
+}
+
+struct AwardPosition: Codable {
+    let code: String?
+    let name: String?
+    let type: String?
+    let abbreviation: String?
+}
+

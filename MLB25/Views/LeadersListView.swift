@@ -112,7 +112,9 @@ struct LeadersListView: View {
 }
 
 #Preview {
-    LeadersListView()
+    NavigationStack{
+        LeadersListView()
+    }
 }
 
 

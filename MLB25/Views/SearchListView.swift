@@ -15,11 +15,27 @@ struct SearchListView: View {
             VStack{
                 HStack{
                     TextField("Search Player", text: $searchVM.searchText)
-                        .textFieldStyle(.roundedBorder)
+                        .autocorrectionDisabled()
+                        .padding(.horizontal, 12)
+                        .padding(.trailing, 30)
+                        .frame(height: 36)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(.gray, lineWidth: 1)
+                        )
                         .overlay{
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(.gray, lineWidth: 2)
-                                .autocorrectionDisabled()
+                            HStack {
+                                Spacer()
+                                if !searchVM.searchText.isEmpty {
+                                    Button {
+                                        searchVM.searchText = ""
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding(.trailing, 8)
+                                }
+                            }
                         }
                         .onChange(of: searchVM.searchText) {
                             Task {
@@ -81,5 +97,7 @@ struct SearchListView: View {
 }
 
 #Preview {
-    SearchListView()
+    NavigationStack{
+        SearchListView()
+    }
 }

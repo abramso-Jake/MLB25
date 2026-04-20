@@ -42,6 +42,44 @@ enum PlayerStatSelection: Hashable {
     }
 }
 
+enum HitterSplitSelection: String, CaseIterable, Identifiable {
+    case overall = "Overall"
+    case vsLeftPitcher = "vs LHP"
+    case vsRightPitcher = "vs RHP"
+
+    var id: String { rawValue }
+
+    var sitCode: String? {
+        switch self {
+        case .overall:
+            return nil
+        case .vsLeftPitcher:
+            return "vl"
+        case .vsRightPitcher:
+            return "vr"
+        }
+    }
+}
+
+enum PitcherSplitSelection: String, CaseIterable, Identifiable {
+    case overall = "Overall"
+    case vsLeftBatter = "vs LHB"
+    case vsRightBatter = "vs RHB"
+
+    var id: String { rawValue }
+
+    var sitCode: String? {
+        switch self {
+        case .overall:
+            return nil
+        case .vsLeftBatter:
+            return "vl"
+        case .vsRightBatter:
+            return "vr"
+        }
+    }
+}
+
 @MainActor
 @Observable
 class PlayerViewModel{
@@ -50,7 +88,158 @@ class PlayerViewModel{
     var isLoading = false
     var errorMessage = ""
     var availableSeasons: [String] = []
+    var playerDetails: PlayerDetails?
+    var yearByYear: [YearByYearSplit] = []
+    var hitterSplitStats: [SplitStatSplit] = []
+    var pitcherSplitStats: [SplitStatSplit] = []
+    var awards: [PlayerAward] = []
+
+    let majorAwardKeywords = [
+        "MVP",
+        "Silver Slugger",
+        "All-Star",
+        "Cy Young",
+        "Rookie of the Year",
+        "Gold Glove",
+        "World Series Championship",
+        "NLCS MVP",
+        "ALCS MVP"
+    ]
+    var majorAwards: [PlayerAward] {
+        awards.filter { award in
+            guard let name = award.name else { return false }
+            return majorAwardKeywords.contains { name.localizedCaseInsensitiveContains($0) }
+        }
+        .sorted { ($0.season ?? "") > ($1.season ?? "") }
+    }
+    func awardCount(for awardName: String) -> Int {
+        majorAwards.filter { $0.name == awardName }.count
+    }
     
+    func awards(for season: String) -> [PlayerAward] {
+        majorAwards
+            .filter { $0.season == season }
+            .sorted { ($0.name ?? "") < ($1.name ?? "") }
+    }
+
+    func getAwards(for player: Roster) async {
+        let urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/awards"
+
+        guard let url = URL(string: urlString) else { return }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(AwardsResponse.self, from: data)
+            self.awards = response.awards
+        } catch {
+            print("ERROR loading awards: \(error.localizedDescription)")
+        }
+    }
+    
+    func getHitterSplitStats(for player: Roster, season: String, sitCode: String?) async {
+        if sitCode == nil {
+            await getData(for: player, selection: .season(season))
+            return
+        }
+
+        isLoading = true
+        errorMessage = ""
+        statLine = nil
+
+        let urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=hitting&sitCodes=\(sitCode!)&season=\(season)"
+
+        guard let url = URL(string: urlString) else {
+            errorMessage = "Bad URL"
+            isLoading = false
+            return
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(SplitStatsArray.self, from: data)
+
+            statLine = response.stats.first?.splits.first?.stat
+
+            if statLine == nil {
+                errorMessage = "No Stats Available"
+            }
+        } catch {
+            errorMessage = "Error loading split stats."
+            print("ERROR loading hitter split stats: \(error.localizedDescription)")
+        }
+
+        isLoading = false
+    }
+    
+    func getPitcherSplitStats(for player: Roster, season: String, sitCode: String?) async {
+        if sitCode == nil {
+            await getData(for: player, selection: .season(season))
+            return
+        }
+
+        isLoading = true
+        errorMessage = ""
+        statLine = nil
+
+        let urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=pitching&sitCodes=\(sitCode!)&season=\(season)"
+
+        guard let url = URL(string: urlString) else {
+            errorMessage = "Bad URL"
+            isLoading = false
+            return
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(SplitStatsArray.self, from: data)
+
+            statLine = response.stats.first?.splits.first?.stat
+
+            if statLine == nil {
+                errorMessage = "No Stats Available"
+            }
+        } catch {
+            errorMessage = "Error loading split stats."
+            print("ERROR loading pitcher split stats: \(error.localizedDescription)")
+        }
+
+        isLoading = false
+    }
+    
+    func getTwoWayPitcherSplitStats(for player: Roster, season: String, sitCode: String?) async {
+        if sitCode == nil {
+            await getData(for: player, selection: .season(season))
+            return
+        }
+
+        isLoading = true
+        errorMessage = ""
+        secondStatLine = nil
+
+        let urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=pitching&sitCodes=\(sitCode!)&season=\(season)"
+
+        guard let url = URL(string: urlString) else {
+            errorMessage = "Bad URL"
+            isLoading = false
+            return
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(SplitStatsArray.self, from: data)
+
+            secondStatLine = response.stats.first?.splits.first?.stat
+
+            if secondStatLine == nil {
+                errorMessage = "No Pitching Split Stats Available"
+            }
+        } catch {
+            errorMessage = "Error loading pitching split stats."
+            print("ERROR loading two-way pitching split stats: \(error.localizedDescription)")
+        }
+
+        isLoading = false
+    }
     
     func getData(for player: Roster, selection: PlayerStatSelection) async { //Put function on guide
         isLoading = true
@@ -168,6 +357,7 @@ class PlayerViewModel{
             let response = try JSONDecoder().decode(YearByYearArray.self, from: data)
             let seasons = response.stats.first?.splits.compactMap { $0.season } ?? []
             self.availableSeasons = Array(Set(seasons)).sorted(by: >)
+            self.yearByYear = response.stats.first?.splits ?? []
         } catch {
             print("ERROR loading available seasons: \(error.localizedDescription)")
         }
@@ -188,5 +378,47 @@ class PlayerViewModel{
             return .career
         }
     }
+    
+    func getPlayerDetails(for player: Roster) async {
+        let urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)"
+
+        guard let url = URL(string: urlString) else { return }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(PlayerDetailsArray.self, from: data)
+            self.playerDetails = response.people.first
+            print("STATUS RAW:", response.people.first?.status as Any)
+            print("STATUS DESC:", response.people.first?.status?.description as Any)
+        } catch {
+            print("ERROR loading player details: \(error.localizedDescription)")
+        }
+    }
+    
+    func teamName(for season: String) -> String? {
+        let teams = yearByYear
+            .filter { $0.season == season }
+            .compactMap { $0.team?.name }
+        
+        if teams.isEmpty { return nil }
+        
+        // Remove duplicates
+        let uniqueTeams = Array(Set(teams))
+        
+        // Format names (Red Sox, Blue Jays, Dodgers, etc.)
+        let formattedTeams = uniqueTeams.map { fullName -> String in
+            let words = fullName.components(separatedBy: " ")
+            
+            if words.count >= 3 {
+                return words.suffix(2).joined(separator: " ")
+            } else {
+                return words.last ?? fullName
+            }
+        }
+        
+        return formattedTeams.joined(separator: ", ")
+    }
+    
+    
     
 }
