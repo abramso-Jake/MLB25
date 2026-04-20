@@ -29,6 +29,9 @@
 		957CD2A32F9528A2000FB709 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957CD2A22F9528A2000FB709 /* Chat.swift */; };
 		957CD2A52F9528C0000FB709 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957CD2A42F9528C0000FB709 /* ChatViewModel.swift */; };
 		957CD2BF2F957C4E000FB709 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957CD2BE2F957C4E000FB709 /* ChatListView.swift */; };
+		95BAFB1B2F96D77500DC51C9 /* TeamDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BAFB1A2F96D77500DC51C9 /* TeamDetail.swift */; };
+		95BAFB1D2F96D7C500DC51C9 /* TeamDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BAFB1C2F96D7C500DC51C9 /* TeamDetailViewModel.swift */; };
+		95BAFB1F2F96D7EB00DC51C9 /* TeamDetailListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BAFB1E2F96D7EB00DC51C9 /* TeamDetailListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +58,9 @@
 		957CD2A22F9528A2000FB709 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		957CD2A42F9528C0000FB709 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		957CD2BE2F957C4E000FB709 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
+		95BAFB1A2F96D77500DC51C9 /* TeamDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDetail.swift; sourceTree = "<group>"; };
+		95BAFB1C2F96D7C500DC51C9 /* TeamDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDetailViewModel.swift; sourceTree = "<group>"; };
+		95BAFB1E2F96D7EB00DC51C9 /* TeamDetailListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDetailListView.swift; sourceTree = "<group>"; };
 		95E794BE2F7DC95B006ADAC6 /* MLB25.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLB25.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -78,6 +84,7 @@
 				95013AB72F8C22A6007BC8F4 /* RosterViewModel.swift */,
 				95013AB82F8C22A6007BC8F4 /* SearchViewModel.swift */,
 				95013AB92F8C22A6007BC8F4 /* TeamViewModel.swift */,
+				95BAFB1C2F96D7C500DC51C9 /* TeamDetailViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -92,6 +99,7 @@
 				95013ABE2F8C22A6007BC8F4 /* Search.swift */,
 				95013ABF2F8C22A6007BC8F4 /* Standings.swift */,
 				95013AC02F8C22A6007BC8F4 /* Team.swift */,
+				95BAFB1A2F96D77500DC51C9 /* TeamDetail.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -105,6 +113,7 @@
 				95013AC42F8C22A6007BC8F4 /* PlayerListView.swift */,
 				95013AC52F8C22A6007BC8F4 /* RosterListView.swift */,
 				95013AC72F8C22A6007BC8F4 /* TeamListView.swift */,
+				95BAFB1E2F96D7EB00DC51C9 /* TeamDetailListView.swift */,
 				95013AC22F8C22A6007BC8F4 /* FrontListView.swift */,
 			);
 			path = Views;
@@ -214,6 +223,9 @@
 				95013ACF2F8C22A6007BC8F4 /* LeadersViewModel.swift in Sources */,
 				95013AD02F8C22A6007BC8F4 /* PlayerViewModel.swift in Sources */,
 				957CD2A32F9528A2000FB709 /* Chat.swift in Sources */,
+				95BAFB1B2F96D77500DC51C9 /* TeamDetail.swift in Sources */,
+				95BAFB1F2F96D7EB00DC51C9 /* TeamDetailListView.swift in Sources */,
+				95BAFB1D2F96D7C500DC51C9 /* TeamDetailViewModel.swift in Sources */,
 				95013AD12F8C22A6007BC8F4 /* RosterViewModel.swift in Sources */,
 				95013AD22F8C22A6007BC8F4 /* SearchViewModel.swift in Sources */,
 				95013AD32F8C22A6007BC8F4 /* TeamViewModel.swift in Sources */,

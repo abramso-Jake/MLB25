@@ -141,3 +141,8 @@ struct AwardPosition: Codable {
     let abbreviation: String?
 }
 
+struct DisplayAward: Identifiable, Hashable {
+    let id: String
+    let season: String
+    let name: String
+}

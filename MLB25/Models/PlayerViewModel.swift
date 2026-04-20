@@ -105,21 +105,45 @@ class PlayerViewModel{
         "NLCS MVP",
         "ALCS MVP"
     ]
-    var majorAwards: [PlayerAward] {
-        awards.filter { award in
-            guard let name = award.name else { return false }
-            return majorAwardKeywords.contains { name.localizedCaseInsensitiveContains($0) }
+    var majorAwards: [DisplayAward] {
+        var seen = Set<String>()
+
+        return awards.compactMap { award in
+            guard
+                let season = award.season,
+                let normalized = normalizedAwardName(award.name)
+            else { return nil }
+
+            // prevents duplicates like Baseball America ROY + Jackie Robinson ROY
+            let key = "\(season)-\(normalized)"
+            guard seen.insert(key).inserted else { return nil }
+
+            return DisplayAward(
+                id: key,
+                season: season,
+                name: normalized
+            )
         }
-        .sorted { ($0.season ?? "") > ($1.season ?? "") }
-    }
-    func awardCount(for awardName: String) -> Int {
-        majorAwards.filter { $0.name == awardName }.count
+        .sorted { $0.season > $1.season }
     }
     
-    func awards(for season: String) -> [PlayerAward] {
+    var careerAwardTallies: [(name: String, count: Int)] {
+        let grouped = Dictionary(grouping: majorAwards) { $0.name }
+
+        return grouped
+            .map { (name: $0.key, count: $0.value.count) }
+            .sorted {
+                if $0.count == $1.count {
+                    return $0.name < $1.name
+                }
+                return $0.count > $1.count
+            }
+    }
+
+    func awards(for season: String) -> [DisplayAward] {
         majorAwards
             .filter { $0.season == season }
-            .sorted { ($0.name ?? "") < ($1.name ?? "") }
+            .sorted { $0.name < $1.name }
     }
 
     func getAwards(for player: Roster) async {
@@ -399,24 +423,87 @@ class PlayerViewModel{
         let teams = yearByYear
             .filter { $0.season == season }
             .compactMap { $0.team?.name }
-        
+
         if teams.isEmpty { return nil }
-        
-        // Remove duplicates
-        let uniqueTeams = Array(Set(teams))
-        
-        // Format names (Red Sox, Blue Jays, Dodgers, etc.)
+
+        var seen = Set<String>()
+        let uniqueTeams = teams.filter { seen.insert($0).inserted }
+
+        let twoWordNicknames: Set<String> = [
+            "Red Sox",
+            "White Sox",
+            "Blue Jays"
+        ]
+
         let formattedTeams = uniqueTeams.map { fullName -> String in
             let words = fullName.components(separatedBy: " ")
-            
-            if words.count >= 3 {
-                return words.suffix(2).joined(separator: " ")
-            } else {
-                return words.last ?? fullName
+
+            guard !words.isEmpty else { return fullName }
+
+            if words.count >= 2 {
+                let lastTwo = words.suffix(2).joined(separator: " ")
+                if twoWordNicknames.contains(lastTwo) {
+                    return lastTwo
+                }
             }
+
+            return words.last ?? fullName
         }
-        
+
         return formattedTeams.joined(separator: ", ")
+    }
+    
+    func normalizedAwardName(_ rawName: String?) -> String? {
+        guard let rawName else { return nil }
+        let name = rawName.lowercased()
+
+        // Exclude awards you do not want
+        if name.contains("world baseball classic") || name.contains("wbc") {
+            return nil
+        }
+
+        // Merge duplicates / shorten names
+        if name.contains("rookie of the year") {
+            return "ROTY"
+        }
+        if name.contains("silver slugger") {
+            return "Silver Slugger"
+        }
+        if name.contains("all-star") {
+            return "All-Star"
+        }
+        if name.contains("mvp") {
+            return "MVP"
+        }
+        if name.contains("cy young") {
+            return "Cy Young"
+        }
+        if name.contains("gold glove") {
+            return "Gold Glove"
+        }
+        if name.contains("hank aaron") {
+            return "HA Award"
+        }
+        if name.contains("world series championship") {
+            return "WS Champion"
+        }
+        if name.contains("nlcs mvp") {
+            return "NLCS MVP"
+        }
+        if name.contains("alcs mvp") {
+            return "ALCS MVP"
+        }
+        if name.contains("all-mlb first team") {
+            return nil
+        }
+        if name.contains("all-mlb second team") {
+            return nil
+        }
+        if name.contains("outstanding dh") {
+            return nil
+        }
+
+        return nil
     }
     
     

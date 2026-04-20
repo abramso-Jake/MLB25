@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct ChatListView: View {
+    @FocusState private var isInputFocused: Bool
     @State private var chatVM = ChatViewModel()
     @Environment(\.dismiss) var dismiss
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -37,16 +39,20 @@ struct ChatListView: View {
                                     Spacer()
                                 }
                                 .padding(.horizontal)
+                                .id("thinking-indicator")
                             }
                         }
                         .padding()
                     }
-                    .onChange(of: chatVM.messages.count) {
-                        if let lastID = chatVM.messages.last?.id {
-                            withAnimation {
-                                proxy.scrollTo(lastID, anchor: .bottom)
-                            }
-                        }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onAppear {
+                        scrollToBottom(proxy: proxy, animated: false)
+                    }
+                    .onChange(of: chatVM.messages.last?.id) {
+                        scrollToBottom(proxy: proxy, animated: false)
+                    }
+                    .onChange(of: chatVM.isLoading) {
+                        scrollToBottom(proxy: proxy, animated: false)
                     }
                 }
 
@@ -58,19 +64,23 @@ struct ChatListView: View {
                         .padding(.top, 8)
                 }
 
-                Spacer()
-
                 HStack(alignment: .bottom, spacing: 8) {
-                    TextField("Ask a baseball question...", text: $chatVM.inputText)
+                    TextField("Ask a baseball question...", text: $chatVM.inputText, axis: .vertical)
                         .autocorrectionDisabled()
+                        .lineLimit(1...5)
+                        .focused($isInputFocused)
+                        .submitLabel(.done)
+                        .onSubmit {
+                            submitMessage()
+                        }
                         .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
                         .padding(.trailing, 30)
-                        .frame(height: 36)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(.gray, lineWidth: 1)
                         )
-                        .overlay{
+                        .overlay {
                             HStack {
                                 Spacer()
                                 if !chatVM.inputText.isEmpty {
@@ -86,9 +96,7 @@ struct ChatListView: View {
                         }
 
                     Button {
-                        Task {
-                            await chatVM.sendMessage()
-                        }
+                        submitMessage()
                     } label: {
                         Image(systemName: "arrow.up.circle.fill")
                             .font(.system(size: 28))
@@ -99,11 +107,42 @@ struct ChatListView: View {
             }
             .navigationTitle("Baseball AI")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar{
+            .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("", systemImage: "chevron.left", role: .close) {
                         dismiss()
                     }
+                }
+            }
+        }
+    }
+    private func submitMessage() {
+        let trimmed = chatVM.inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !chatVM.isLoading else { return }
+
+        isInputFocused = false
+
+        Task {
+            await chatVM.sendMessage()
+        }
+    }
+    private func scrollToBottom(proxy: ScrollViewProxy, animated: Bool) {
+        DispatchQueue.main.async {
+            if chatVM.isLoading {
+                if animated {
+                    withAnimation {
+                        proxy.scrollTo("thinking-indicator", anchor: .bottom)
+                    }
+                } else {
+                    proxy.scrollTo("thinking-indicator", anchor: .bottom)
+                }
+            } else if let lastID = chatVM.messages.last?.id {
+                if animated {
+                    withAnimation {
+                        proxy.scrollTo(lastID, anchor: .bottom)
+                    }
+                } else {
+                    proxy.scrollTo(lastID, anchor: .bottom)
                 }
             }
         }

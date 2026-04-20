@@ -144,6 +144,8 @@ struct PlayerListView: View {
                                 Text(active ? "Status: Active" : "Status: Inactive")
                                     .font(.headline)
                                     .fontWeight(.bold)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
                             }
                             if details.active == true, let age = details.currentAge {
                                 Text("Age: \(age)")
@@ -163,21 +165,23 @@ struct PlayerListView: View {
                         PlayerImage
                             .padding(.vertical)
                             .offset(y: 20)
-                        if case .career = selectedStat, !playerVM.majorAwards.isEmpty {
+                        if case .career = selectedStat, !playerVM.careerAwardTallies.isEmpty {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("Awards")
                                     .font(.title3)
                                     .fontWeight(.bold)
 
-                                ForEach(playerVM.majorAwards) { award in
-                                    let awardName = award.name ?? "Award"
-                                    let count = playerVM.awardCount(for: awardName)
-
-                                    Text("\(award.season ?? "") – \(awardName) (\(count)x career)")
+                                ForEach(playerVM.careerAwardTallies, id: \.name) { award in
+                                    Text("\(award.count)x \(award.name)")
                                         .font(.subheadline)
+                                        .minimumScaleFactor(0.5)
+                                        .lineLimit(1)
                                 }
                             }
-                            .padding(.top, 8)
+                            .padding(.top, 10)
+                            .padding()
+                            .padding(.horizontal, 5)
+                            .offset(x: -20)
                         }
                         if case let .season(season) = selectedStat {
                             let seasonAwards = playerVM.awards(for: season)
@@ -189,11 +193,16 @@ struct PlayerListView: View {
                                         .fontWeight(.bold)
 
                                     ForEach(seasonAwards) { award in
-                                        Text(award.name ?? "Award")
+                                        Text(award.name)
                                             .font(.subheadline)
+                                            .minimumScaleFactor(0.5)
+                                            .lineLimit(1)
                                     }
                                 }
-                                .padding(.top, 8)
+                                .padding(.top, 10)
+                                .padding()
+                                .padding(.horizontal, 5)
+                                .offset(x: -20)
                             }
                         }
                     }
