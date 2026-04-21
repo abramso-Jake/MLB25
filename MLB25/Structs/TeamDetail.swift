@@ -15,7 +15,6 @@ struct TeamDetail: Decodable, Identifiable {
     let abbreviation: String?
     let firstYearOfPlay: String?
     let venue: TeamVenueReference?
-    let league: NamedReference?
     let division: NamedReference?
 }
 
@@ -43,9 +42,10 @@ struct TeamExtraInfo {
     let locationText: String
     let latitude: Double
     let longitude: Double
-    let stadiumImageURL: String
-    let homeJerseyURL: String
-    let awayJerseyURL: String
+    let stadiumImageName: String
+    let homeJerseyImageName: String
+    let awayJerseyImageName: String
+    let logoImageName: String
 }
 
 struct TeamExtraData {
@@ -55,9 +55,10 @@ struct TeamExtraData {
             locationText: "Bronx, New York",
             latitude: 40.8296,
             longitude: -73.9262,
-            stadiumImageURL: "YOUR_STADIUM_IMAGE_URL",
-            homeJerseyURL: "YOUR_HOME_JERSEY_URL",
-            awayJerseyURL: "YOUR_AWAY_JERSEY_URL"
+            stadiumImageName: "yankees_stadium",
+            homeJerseyImageName: "yankees_home",
+            awayJerseyImageName: "yankees_away",
+            logoImageName: "yankees_logo"
         )
     ]
 }

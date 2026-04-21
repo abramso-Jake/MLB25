@@ -49,6 +49,7 @@ struct SearchListView: View {
                     Spacer()
                     ProgressView()
                         .tint(.red)
+                        .scaleEffect(4)
                     Spacer()
                 } else if !searchVM.errorMessage.isEmpty {
                     Spacer()

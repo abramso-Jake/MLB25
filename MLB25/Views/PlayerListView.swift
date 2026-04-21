@@ -138,7 +138,7 @@ struct PlayerListView: View {
                                     .font(.title3)
                                     .fontWeight(.bold)
                                     .minimumScaleFactor(0.5)
-                                    .lineLimit(1)
+                                    .lineLimit(2)
                             }
                             if let active = details.active {
                                 Text(active ? "Status: Active" : "Status: Inactive")
@@ -172,16 +172,18 @@ struct PlayerListView: View {
                                     .fontWeight(.bold)
 
                                 ForEach(playerVM.careerAwardTallies, id: \.name) { award in
-                                    Text("\(award.count)x \(award.name)")
+                                    Text("🏆 \(award.count)x \(award.name)")
                                         .font(.subheadline)
                                         .minimumScaleFactor(0.5)
                                         .lineLimit(1)
                                 }
+                                
                             }
                             .padding(.top, 10)
                             .padding()
                             .padding(.horizontal, 5)
                             .offset(x: -20)
+                            
                         }
                         if case let .season(season) = selectedStat {
                             let seasonAwards = playerVM.awards(for: season)
@@ -193,7 +195,7 @@ struct PlayerListView: View {
                                         .fontWeight(.bold)
 
                                     ForEach(seasonAwards) { award in
-                                        Text(award.name)
+                                        Text("⭐️ \(award.name)")
                                             .font(.subheadline)
                                             .minimumScaleFactor(0.5)
                                             .lineLimit(1)
@@ -219,6 +221,7 @@ struct PlayerListView: View {
                                     Text("IP: \(stat.inningsPitched ?? "-")")
                                     Text("ERA: \(stat.era ?? "-")")
                                     Text("WHIP: \(stat.whip ?? "-")")
+                                    Text("WPCT: \(stat.winPercentage ?? "-")")
                                     Text("ER: \(stat.earnedRuns ?? 0)")
                                     Text("W: \(stat.wins ?? 0)")
                                     Text("L: \(stat.losses ?? 0)")
@@ -264,6 +267,7 @@ struct PlayerListView: View {
                                         Text("IP: \(pitching.inningsPitched ?? "-")")
                                         Text("ERA: \(pitching.era ?? "-")")
                                         Text("WHIP: \(pitching.whip ?? "-")")
+                                        Text("WPCT: \(pitching.winPercentage ?? "-")")
                                         Text("ER: \(pitching.earnedRuns ?? 0)")
                                         Text("W: \(pitching.wins ?? 0)")
                                         Text("L: \(pitching.losses ?? 0)")

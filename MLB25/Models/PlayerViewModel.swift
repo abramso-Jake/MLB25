@@ -94,27 +94,28 @@ class PlayerViewModel{
     var pitcherSplitStats: [SplitStatSplit] = []
     var awards: [PlayerAward] = []
 
-    let majorAwardKeywords = [
-        "MVP",
-        "Silver Slugger",
-        "All-Star",
-        "Cy Young",
-        "Rookie of the Year",
-        "Gold Glove",
-        "World Series Championship",
-        "NLCS MVP",
-        "ALCS MVP"
+    let allowedAwardIDs: Set<String> = [
+        "ALMVP", "NLMVP",
+        "ALCY", "NLCY",
+        "ALSS", "NLSS",
+        "ALAS", "NLAS",
+        "ALROY", "NLROY",
+        "ALGG", "NLGG",
+        "ALHAA", "NLHAA",
+        "WSCHAMP",
+        "ALCSMVP", "NLCSMVP", "HOF"
     ]
+
     var majorAwards: [DisplayAward] {
         var seen = Set<String>()
 
         return awards.compactMap { award in
             guard
                 let season = award.season,
-                let normalized = normalizedAwardName(award.name)
+                allowedAwardIDs.contains(award.id),
+                let normalized = normalizedAwardName(from: award)
             else { return nil }
 
-            // prevents duplicates like Baseball America ROY + Jackie Robinson ROY
             let key = "\(season)-\(normalized)"
             guard seen.insert(key).inserted else { return nil }
 
@@ -126,7 +127,7 @@ class PlayerViewModel{
         }
         .sorted { $0.season > $1.season }
     }
-    
+
     var careerAwardTallies: [(name: String, count: Int)] {
         let grouped = Dictionary(grouping: majorAwards) { $0.name }
 
@@ -144,6 +145,35 @@ class PlayerViewModel{
         majorAwards
             .filter { $0.season == season }
             .sorted { $0.name < $1.name }
+    }
+
+    func normalizedAwardName(from award: PlayerAward) -> String? {
+        switch award.id {
+        case "ALMVP", "NLMVP":
+            return "MVP"
+        case "ALCY", "NLCY":
+            return "Cy Young"
+        case "ALSS", "NLSS":
+            return "Silver Slugger"
+        case "ALAS", "NLAS":
+            return "All-Star"
+        case "ALROY", "NLROY":
+            return "ROTY"
+        case "ALGG", "NLGG":
+            return "Gold Glove"
+        case "ALHAA", "NLHAA":
+            return "HA Award"
+        case "WSCHAMP":
+            return "WS Champion"
+        case "ALCSMVP":
+            return "ALCS MVP"
+        case "NLCSMVP":
+            return "NLCS MVP"
+        case "HOF":
+            return "Hall of Fame"
+        default:
+            return nil
+        }
     }
 
     func getAwards(for player: Roster) async {

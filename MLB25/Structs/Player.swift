@@ -47,6 +47,7 @@ struct PlayerStat: Codable {
     let completeGames: Int?
     let pickoffs: Int?
     let earnedRuns: Int?
+    let winPercentage: String?
 }
 
 struct YearByYearArray: Codable {
