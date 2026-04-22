@@ -66,13 +66,13 @@ struct ChatListView: View {
 
                 HStack(alignment: .bottom, spacing: 8) {
                     TextField("Ask a baseball question...", text: $chatVM.inputText, axis: .vertical)
-                        .autocorrectionDisabled()
-                        .lineLimit(1...5)
-                        .focused($isInputFocused)
                         .submitLabel(.done)
                         .onSubmit {
                             submitMessage()
                         }
+                        .autocorrectionDisabled()
+                        .lineLimit(1...5)
+                        .focused($isInputFocused)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .padding(.trailing, 30)

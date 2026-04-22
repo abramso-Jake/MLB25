@@ -25,8 +25,7 @@ struct TeamListView: View {
             ZStack{
                 List(filteredTeams) { team in
                     NavigationLink {
-//                        RosterListView(team: team, record: teamsVM.recordsByTeamID[team.id] ?? "--" )
-                        TeamDetailListView(team: team)
+                        TeamDetailListView(team: team, record: teamsVM.recordsByTeamID[team.id] ?? "--")
                     } label:{
                         Text("\(teamsVM.returnIndex(of: team)). \(team.name): \(teamsVM.recordsByTeamID[team.id] ?? "--")")
                             .font(.title2)

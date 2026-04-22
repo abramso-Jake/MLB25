@@ -137,8 +137,8 @@ struct PlayerListView: View {
                                 Text("Team: \(teamName)")
                                     .font(.title3)
                                     .fontWeight(.bold)
-                                    .minimumScaleFactor(0.5)
-                                    .lineLimit(2)
+                                    .minimumScaleFactor(0.4)
+                                    .lineLimit(1)
                             }
                             if let active = details.active {
                                 Text(active ? "Status: Active" : "Status: Inactive")

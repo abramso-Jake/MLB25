@@ -3,27 +3,43 @@ import MapKit
 
 struct TeamDetailListView: View {
     let team: Team
+    let record: String
     @State private var detailVM = TeamDetailViewModel()
-    
+    @State private var teamVM = TeamViewModel()
     var body: some View {
         ZStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     
-                    if let teamDetail = detailVM.teamDetail {
-                        VStack(alignment: .leading, spacing: 8) {
+                    if let teamDetail = detailVM.teamDetail,
+                       let extra = detailVM.extraInfo {
+                        
+                        VStack(alignment: .center, spacing: 12) {
+                            Image(extra.logoImageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 100)
+                                .frame(maxWidth: .infinity)
+
                             Text(teamDetail.name)
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
-                            
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.8)
+                                .frame(maxWidth: .infinity, alignment: .center)
+
                             if let locationName = teamDetail.locationName {
                                 Text(locationName)
                                     .font(.title3)
                                     .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity, alignment: .center)
                             }
                         }
+                        .frame(maxWidth: .infinity)
                         
-                        GroupBox("Team Information: ") {
+                        GroupBox("Team Information") {
                             VStack(alignment: .leading, spacing: 10) {
                                 detailRow(title: "Franchise", value: teamDetail.franchiseName ?? "N/A")
                                 detailRow(title: "Club Name", value: teamDetail.clubName ?? "N/A")
@@ -34,21 +50,20 @@ struct TeamDetailListView: View {
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .groupBoxStyle(CardGroupBoxStyle())
-                    }
-                    
-                    if let extra = detailVM.extraInfo {
+                        
+                        GroupBox("Description") {
+                            Text(extra.description)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .frame(maxWidth: .infinity)
+                        
                         GroupBox("Location") {
                             VStack(alignment: .leading, spacing: 10) {
                                 detailRow(title: "Location", value: extra.locationText)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        
-                        GroupBox("Description") {
-                            Text(extra.description)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
+                        .frame(maxWidth: .infinity)
                         
                         let stadiumCoordinate = CLLocationCoordinate2D(
                             latitude: extra.latitude,
@@ -57,13 +72,48 @@ struct TeamDetailListView: View {
                         
                         Map {
                             Marker(
-                                detailVM.teamDetail?.venue?.name ?? team.name,
+                                teamDetail.venue?.name ?? team.name,
                                 coordinate: stadiumCoordinate
                             )
                         }
                         .frame(height: 260)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                         
+                        GroupBox("Stadium") {
+                            Image(extra.stadiumImageName)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 220)
+                                .frame(maxWidth: .infinity)
+                                .clipped()
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        GroupBox("Jersey") {
+                            Image(extra.jerseyImageName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 220)
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        NavigationLink {
+                            RosterListView(
+                                team: team,
+                                record: record // or "--" if not passed yet
+                            )
+                        } label: {
+                            Text("Rosters")
+                                .font(.headline)
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.blue)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .padding(.top, 10)
                     }
                     
                     if !detailVM.errorMessage.isEmpty {
@@ -74,6 +124,7 @@ struct TeamDetailListView: View {
                 }
                 .padding()
             }
+            .padding(10)
             
             if detailVM.isLoading {
                 ProgressView()
@@ -98,33 +149,15 @@ struct TeamDetailListView: View {
                 .font(.body)
         }
     }
-    struct CardGroupBoxStyle: GroupBoxStyle {
-          func makeBody(configuration: Configuration) -> some View {
-              VStack(alignment: .leading, spacing: 8) {
-                  configuration.label
-                      .font(.headline)
-                      .foregroundStyle(.black)
-                  configuration.content
-              }
-              .padding()
-              .background(
-                  RoundedRectangle(cornerRadius: 14)
-                      .fill(Color(.secondarySystemBackground))
-              )
-              .overlay(
-                  RoundedRectangle(cornerRadius: 14)
-                    .stroke(.gray, lineWidth: 1)
-              )
-          }
-      }
 }
 
 #Preview {
     TeamDetailListView(
         team: Team(
-            id: 121,
-            name: "Mets",
-            link: "https://statsapi.mlb.com/api/v1/teams/121/"
-        )
+            id: 134,
+            name: "Pirates",
+            link: "https://statsapi.mlb.com/api/v1/teams/134/"
+        ),
+        record: "7-15"
     )
 }
