@@ -39,10 +39,6 @@ class RosterViewModel{
         }
         
     }
-    func returnIndex(of r: Roster)-> Int{
-        guard let index = roster.firstIndex(where: {$0.id == r.id}) else {return 0}
-        return index + 1
-    }
     
 }
    

@@ -39,10 +39,6 @@ class TeamViewModel{
         }
         
     }
-    func returnIndex(of team: Team)-> Int{
-        guard let index = teams.firstIndex(where: {$0.id == team.id}) else {return 0}
-        return index + 1
-    }
     func getRecords(for season: Int = 2026) async {
         let urlString = "https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=\(season)&standingsTypes=regularSeason"
 
