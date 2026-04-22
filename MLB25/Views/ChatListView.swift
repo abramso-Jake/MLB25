@@ -107,13 +107,13 @@ struct ChatListView: View {
             }
             .navigationTitle("Baseball AI")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("", systemImage: "chevron.left", role: .close) {
-                        dismiss()
-                    }
-                }
-            }
+//            .toolbar {
+//                ToolbarItem(placement: .cancellationAction) {
+//                    Button("", systemImage: "chevron.left", role: .close) {
+//                        dismiss()
+//                    }
+//                }
+//            }
         }
     }
     private func submitMessage() {

@@ -100,13 +100,6 @@ struct LeadersListView: View {
             .onChange(of: leadersVM.selectedSeason) {
                 Task { await leadersVM.loadLeaders() }
             }
-            .toolbar{
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("", systemImage: "chevron.left", role: .close) {
-                        dismiss()
-                    }
-                }
-            }
         }
     }
 }

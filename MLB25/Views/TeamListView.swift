@@ -78,13 +78,6 @@ struct TeamListView: View {
                 .padding()
                 .background(.ultraThinMaterial)
             }
-            .toolbar{
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("", systemImage: "chevron.left", role: .close) {
-                        dismiss()
-                    }
-                }
-            }
            
             
         }

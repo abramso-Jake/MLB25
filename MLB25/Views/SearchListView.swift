@@ -85,13 +85,6 @@ struct SearchListView: View {
                     
                 }
             }
-            .toolbar{
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("", systemImage: "chevron.left", role: .close) {
-                        dismiss()
-                    }
-                }
-            }
             .navigationTitle("Player Search:")
         }
     }

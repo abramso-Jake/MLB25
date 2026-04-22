@@ -1,77 +1,40 @@
-//
-//  FrontView.swift
-//  MLB25
-//
-//  Created by Jake Abramson on 4/7/26.
-//
-
 import SwiftUI
 
 struct FrontListView: View {
-    enum Des: Identifiable {
-        case team
-        case leader
-        case search
-        case chat
-        
-        var id: Self { self }
-    }
-
-    @State private var selectedView: Des?
     var body: some View {
-        VStack{
-            Image("icon")
-                .resizable()
-                .scaledToFit()
-            Text("Welcome to MLB Stats! Click a desired function to get started!")
-                .font(Font.custom("Times New Roman", size: 20))
-                .font(.title2)
-                .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.5)
-                .fontWeight(.medium)
-            Spacer()
-            HStack {
-                Button {
-                    selectedView = .team
-                } label: {
-                    Text("Teams")
-                }
-
-                Button {
-                    selectedView = .leader
-                } label: {
-                    Text("Leaders")
-                }
-
-                Button {
-                    selectedView = .search
-                } label: {
-                    Text("Search")
-                }
-                
-                Button {
-                    selectedView = .chat
-                } label: {
-                    Text("Chat")
-                }
-            }
-            .buttonStyle(.glassProminent)
-              
-        }
-        .padding()
-        .fullScreenCover(item: $selectedView) { destination in
-            switch destination {
-            case .team:
+        TabView {
+            NavigationStack {
                 TeamListView()
-            case .leader:
+            }
+            .tabItem {
+                Image(systemName: "person.3.fill")
+                Text("Teams")
+            }
+
+            NavigationStack {
                 LeadersListView()
-            case .search:
+            }
+            .tabItem {
+                Image(systemName: "list.number")
+                Text("Leaders")
+            }
+
+            NavigationStack {
                 SearchListView()
-            case .chat:
+            }
+            .tabItem {
+                Image(systemName: "magnifyingglass")
+                Text("Search")
+            }
+
+            NavigationStack {
                 ChatListView()
             }
+            .tabItem {
+                Image(systemName: "message.fill")
+                Text("Chat")
+            }
         }
-            
     }
 }
 
