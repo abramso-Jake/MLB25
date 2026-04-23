@@ -23,7 +23,8 @@ final class ChatViewModel {
     var errorMessage: String = ""
 
     // Change this to your real backend URL
-    private let backendURLString = "http://136.167.196.30:3000/chat"
+//    private let backendURLString = "http://localhost:3000/chat"
+    private let backendURLString = "http://136.167.197.140:3000/chat"
 //    private let backendURLString = "https://abc123.ngrok.io/chat"
 
     func sendMessage() async {
