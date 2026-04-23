@@ -211,7 +211,7 @@ struct PlayerListView: View {
                     .padding(.horizontal, 20)
                     if playerVM.isLoading{
                         ProgressView()
-                            .tint(.red)
+                            .tint(.blue)
                             .scaleEffect(4)
                     } else if let stat = playerVM.statLine {
                         if player.positionAbbreviation == "P"{
@@ -394,7 +394,7 @@ extension PlayerListView{
                     }
             } else {
                 ProgressView()
-                    .tint(.red)
+                    .tint(.blue)
                     .scaleEffect(4)
             }
             

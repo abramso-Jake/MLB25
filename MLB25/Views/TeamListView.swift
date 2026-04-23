@@ -90,7 +90,7 @@ struct TeamListView: View {
 
             if teamsVM.isLoading {
                 ProgressView()
-                    .tint(.red)
+                    .tint(.blue)
                     .scaleEffect(4)
             }
         }

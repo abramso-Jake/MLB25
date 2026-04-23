@@ -89,7 +89,7 @@ struct SearchListView: View {
             } else if searchVM.isLoading {
                 Spacer()
                 ProgressView()
-                    .tint(.red)
+                    .tint(.blue)
                     .scaleEffect(4)
                 Spacer()
 

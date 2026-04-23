@@ -28,14 +28,6 @@ struct TeamDetailListView: View {
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.8)
                                 .frame(maxWidth: .infinity, alignment: .center)
-
-                            if let locationName = teamDetail.locationName {
-                                Text(locationName)
-                                    .font(.title3)
-                                    .foregroundStyle(.secondary)
-                                    .multilineTextAlignment(.center)
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            }
                         }
                         .frame(maxWidth: .infinity)
                         
@@ -128,7 +120,7 @@ struct TeamDetailListView: View {
             
             if detailVM.isLoading {
                 ProgressView()
-                    .scaleEffect(2)
+                    .scaleEffect(4)
                     .tint(.blue)
             }
         }

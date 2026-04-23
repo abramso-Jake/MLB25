@@ -39,7 +39,7 @@ struct LeadersListView: View {
             if leadersVM.isLoading {
                 Spacer()
                 ProgressView()
-                    .tint(.red)
+                    .tint(.blue)
                     .scaleEffect(4)
                 Spacer()
             } else if !leadersVM.errorMessage.isEmpty {

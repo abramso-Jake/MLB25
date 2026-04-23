@@ -84,7 +84,7 @@ struct RosterListView: View {
 
                 if rosterVM.isLoading {
                     ProgressView()
-                        .tint(.red)
+                        .tint(.blue)
                         .scaleEffect(4)
                 }
             }
