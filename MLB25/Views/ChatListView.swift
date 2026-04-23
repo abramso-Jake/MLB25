@@ -11,117 +11,122 @@ struct ChatListView: View {
     @FocusState private var isInputFocused: Bool
     @State private var chatVM = ChatViewModel()
     @Environment(\.dismiss) var dismiss
-
+    
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 12) {
-                            ForEach(chatVM.messages) { message in
-                                HStack {
-                                    if message.role == .assistant {
-                                        messageBubble(message, isUser: false)
-                                        Spacer(minLength: 40)
-                                    } else {
-                                        Spacer(minLength: 40)
-                                        messageBubble(message, isUser: true)
-                                    }
-                                }
-                                .id(message.id)
-                            }
-
-                            if chatVM.isLoading {
-                                HStack {
-                                    ProgressView()
-                                    Text("Thinking...")
-                                        .foregroundStyle(.secondary)
-                                    Spacer()
-                                }
-                                .padding(.horizontal)
-                                .id("thinking-indicator")
-                            }
-                        }
-                        .padding()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .onAppear {
-                        scrollToBottom(proxy: proxy, animated: false)
-                    }
-                    .onChange(of: chatVM.messages.last?.id) {
-                        scrollToBottom(proxy: proxy, animated: false)
-                    }
-                    .onChange(of: chatVM.isLoading) {
-                        scrollToBottom(proxy: proxy, animated: false)
-                    }
-                }
-
-                if !chatVM.errorMessage.isEmpty {
-                    Text(chatVM.errorMessage)
-                        .font(.footnote)
-                        .foregroundStyle(.red)
-                        .padding(.horizontal)
-                        .padding(.top, 8)
-                }
-
-                HStack(alignment: .bottom, spacing: 8) {
-                    TextField("Ask a baseball question...", text: $chatVM.inputText, axis: .vertical)
-                        .submitLabel(.done)
-                        .onSubmit {
-                            submitMessage()
-                        }
-                        .autocorrectionDisabled()
-                        .lineLimit(1...5)
-                        .focused($isInputFocused)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .padding(.trailing, 30)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(.gray, lineWidth: 1)
-                        )
-                        .overlay {
+        VStack(spacing: 0) {
+            Text("Baseball AI")
+                .multilineTextAlignment(.center)
+                .font(.title)
+                .bold()
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal)
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 12) {
+                        ForEach(chatVM.messages) { message in
                             HStack {
-                                Spacer()
-                                if !chatVM.inputText.isEmpty {
-                                    Button {
-                                        chatVM.inputText = ""
-                                    } label: {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundColor(.gray)
-                                    }
-                                    .padding(.trailing, 8)
+                                if message.role == .assistant {
+                                    messageBubble(message, isUser: false)
+                                    Spacer(minLength: 40)
+                                } else {
+                                    Spacer(minLength: 40)
+                                    messageBubble(message, isUser: true)
                                 }
                             }
+                            .id(message.id)
                         }
-
-                    Button {
-                        submitMessage()
-                    } label: {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .font(.system(size: 28))
+                        
+                        if chatVM.isLoading {
+                            HStack {
+                                ProgressView()
+                                Text("Thinking...")
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                            }
+                            .padding(.horizontal)
+                            .id("thinking-indicator")
+                        }
                     }
-                    .disabled(chatVM.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chatVM.isLoading)
+                    .padding()
                 }
-                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .onAppear {
+                    scrollToBottom(proxy: proxy, animated: false)
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .onChange(of: chatVM.messages.last?.id) {
+                    scrollToBottom(proxy: proxy, animated: false)
+                }
+                .onChange(of: chatVM.isLoading) {
+                    scrollToBottom(proxy: proxy, animated: false)
+                }
             }
-            .navigationTitle("Baseball AI")
-            .navigationBarTitleDisplayMode(.inline)
-//            .toolbar {
-//                ToolbarItem(placement: .cancellationAction) {
-//                    Button("", systemImage: "chevron.left", role: .close) {
-//                        dismiss()
-//                    }
-//                }
-//            }
+            
+            if !chatVM.errorMessage.isEmpty {
+                Text(chatVM.errorMessage)
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+            }
+            
+            HStack(alignment: .bottom, spacing: 8) {
+                TextField("Ask a baseball question...", text: $chatVM.inputText, axis: .vertical)
+                    .submitLabel(.done)
+                    .onSubmit {
+                        submitMessage()
+                    }
+                    .autocorrectionDisabled()
+                    .lineLimit(1...5)
+                    .focused($isInputFocused)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .padding(.trailing, 30)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(.gray, lineWidth: 1)
+                    )
+                    .overlay {
+                        HStack {
+                            Spacer()
+                            if !chatVM.inputText.isEmpty {
+                                Button {
+                                    chatVM.inputText = ""
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(.trailing, 8)
+                            }
+                        }
+                    }
+                
+                Button {
+                    submitMessage()
+                } label: {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.system(size: 28))
+                }
+                .disabled(chatVM.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || chatVM.isLoading)
+            }
+            .padding()
         }
+        
+        //            .toolbar {
+        //                ToolbarItem(placement: .cancellationAction) {
+        //                    Button("", systemImage: "chevron.left", role: .close) {
+        //                        dismiss()
+        //                    }
+        //                }
+        //            }
+        
     }
     private func submitMessage() {
         let trimmed = chatVM.inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !chatVM.isLoading else { return }
-
+        
         isInputFocused = false
-
+        
         Task {
             await chatVM.sendMessage()
         }
@@ -147,7 +152,7 @@ struct ChatListView: View {
             }
         }
     }
-
+    
     @ViewBuilder
     private func messageBubble(_ message: ChatMessage, isUser: Bool) -> some View {
         Text(message.text)
