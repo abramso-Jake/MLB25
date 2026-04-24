@@ -80,13 +80,7 @@ class LeadersViewModel {
         isLoading = false
     }
 
-    private func fetchLeaders(
-        category: String,
-        statGroup: String,
-        season: String,
-        limit: Int,
-        playerPool: String
-    ) async throws -> [LeaderEntry] {
+    private func fetchLeaders(category: String, statGroup: String, season: String, limit: Int, playerPool: String) async throws -> [LeaderEntry]{
         let urlString = "https://statsapi.mlb.com/api/v1/stats/leaders?leaderCategories=\(category)&season=\(season)&statGroup=\(statGroup)&limit=\(limit)&playerPool=\(playerPool)"
 
         guard let url = URL(string: urlString) else {

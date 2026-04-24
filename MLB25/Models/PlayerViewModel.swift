@@ -14,7 +14,7 @@ enum PlayerEntry {
 
 enum PlayerStatSelection: Hashable {
     case career
-    case season(String)
+    case season(String) //carries a string variable
     
     var displayName: String {
         switch self{
@@ -94,7 +94,7 @@ class PlayerViewModel{
     var pitcherSplitStats: [SplitStatSplit] = []
     var awards: [PlayerAward] = []
 
-    let allowedAwardIDs: Set<String> = [
+    let allowedAwardIDs: Set<String> = [ //Unordered set of strings
         "ALMVP", "NLMVP",
         "ALCY", "NLCY",
         "ALSS", "NLSS",
@@ -107,7 +107,7 @@ class PlayerViewModel{
     ]
 
     var majorAwards: [DisplayAward] {
-        var seen = Set<String>()
+        var seen = Set<String>() //unordered set of strings with a parameter
 
         return awards.compactMap { award in
             guard

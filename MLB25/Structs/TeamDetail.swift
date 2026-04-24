@@ -48,7 +48,7 @@ struct TeamExtraInfo {
 }
 
 struct TeamExtraData {
-    static let infoByTeamID: [Int: TeamExtraInfo] = [
+    static let infoByTeamID: [Int: TeamExtraInfo] = [ //Dictionary 
         
         // AL East
         110: TeamExtraInfo(

@@ -10,7 +10,7 @@ import SwiftUI
 
 @MainActor
 @Observable
-final class ChatViewModel {
+class ChatViewModel {
     var messages: [ChatMessage] = [
         ChatMessage(
             role: .assistant,
@@ -22,10 +22,9 @@ final class ChatViewModel {
     var isLoading: Bool = false
     var errorMessage: String = ""
 
-    // Change this to your real backend URL
 //    private let backendURLString = "http://localhost:3000/chat"
     private let backendURLString = "http://136.167.43.4:3000/chat"
-//    private let backendURLString = "https://abc123.ngrok.io/chat"
+
 
     func sendMessage() async {
         let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -62,7 +61,7 @@ final class ChatViewModel {
         request.httpBody = try JSONEncoder().encode(body)
 
         let (data, response) = try await URLSession.shared.data(for: request)
-
+    
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ChatError.invalidResponse
         }

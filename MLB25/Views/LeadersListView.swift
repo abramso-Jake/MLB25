@@ -10,7 +10,7 @@ import SwiftUI
 struct LeadersListView: View {
     @State private var leadersVM = LeadersViewModel()
     @Environment(\.dismiss) var dismiss
-    let seasons = ["2026", "2025", "2024", "2023", "2022"]
+    let seasons = (2000...2026).reversed().map { "\($0)" }
     
     var body: some View {
         VStack {
