@@ -459,28 +459,31 @@ class PlayerViewModel{
         var seen = Set<String>()
         let uniqueTeams = teams.filter { seen.insert($0).inserted }
 
+        // If more than one unique team is present for the season, return "Multiple"
+        if uniqueTeams.count > 1 {
+            return "Multiple"
+        }
+
         let twoWordNicknames: Set<String> = [
             "Red Sox",
             "White Sox",
             "Blue Jays"
         ]
 
-        let formattedTeams = uniqueTeams.map { fullName -> String in
-            let words = fullName.components(separatedBy: " ")
+        // At this point we have exactly one team; format its display name
+        guard let fullName = uniqueTeams.first else { return nil }
+        let words = fullName.components(separatedBy: " ")
 
-            guard !words.isEmpty else { return fullName }
+        guard !words.isEmpty else { return fullName }
 
-            if words.count >= 2 {
-                let lastTwo = words.suffix(2).joined(separator: " ")
-                if twoWordNicknames.contains(lastTwo) {
-                    return lastTwo
-                }
+        if words.count >= 2 {
+            let lastTwo = words.suffix(2).joined(separator: " ")
+            if twoWordNicknames.contains(lastTwo) {
+                return lastTwo
             }
-
-            return words.last ?? fullName
         }
 
-        return formattedTeams.joined(separator: ", ")
+        return words.last ?? fullName
     }
     
     func normalizedAwardName(_ rawName: String?) -> String? {

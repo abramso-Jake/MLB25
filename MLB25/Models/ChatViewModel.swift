@@ -23,7 +23,7 @@ class ChatViewModel {
     var errorMessage: String = ""
 
 //    private let backendURLString = "http://localhost:3000/chat"
-    private let backendURLString = "http://136.167.43.4:3000/chat"
+    private let backendURLString = "http://136.167.196.186:3000/chat"
 
 
     func sendMessage() async {
@@ -62,6 +62,7 @@ class ChatViewModel {
 
         let (data, response) = try await URLSession.shared.data(for: request)
     
+        
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ChatError.invalidResponse
         }
