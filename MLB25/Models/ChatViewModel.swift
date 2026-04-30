@@ -23,7 +23,7 @@ class ChatViewModel {
     var errorMessage: String = ""
 
 //    private let backendURLString = "http://localhost:3000/chat"
-    private let backendURLString = "http://136.167.196.186:3000/chat"
+    private let backendURLString = "https://backend-o1ny.onrender.com/chat"
 
 
     func sendMessage() async {
@@ -52,7 +52,7 @@ class ChatViewModel {
         guard let url = URL(string: backendURLString) else {
             throw ChatError.invalidURL
         }
-
+        print("CHAT URL:", backendURLString)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
