@@ -23,6 +23,7 @@ class ChatViewModel {
     var errorMessage: String = ""
 
 //    private let backendURLString = "http://localhost:3000/chat"
+    //URL fix
     private let backendURLString = "https://backend-o1ny.onrender.com/chat"
 
 
