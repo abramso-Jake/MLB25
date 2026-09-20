@@ -19,6 +19,7 @@ enum HittingLeaderCategory: String, CaseIterable, Identifiable {
     case hits
     case rbi
     case avg
+    case onBasePercentage
     case onBasePlusSlugging
     case stolenBases
 
@@ -32,6 +33,7 @@ enum HittingLeaderCategory: String, CaseIterable, Identifiable {
         case .stolenBases: return "Stolen Bases"
         case .onBasePlusSlugging: return "OPS"
         case .avg: return "AVG"
+        case .onBasePercentage: return "OBP"
         }
     }
 }

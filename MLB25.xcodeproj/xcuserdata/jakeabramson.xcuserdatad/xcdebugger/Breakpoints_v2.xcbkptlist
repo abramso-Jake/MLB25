@@ -46,8 +46,8 @@
             filePath = "MLB25/Models/PlayerViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "465"
-            endingLineNumber = "465"
+            startingLineNumber = "466"
+            endingLineNumber = "466"
             landmarkName = "teamName(for:)"
             landmarkType = "7">
          </BreakpointContent>

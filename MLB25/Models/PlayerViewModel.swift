@@ -83,6 +83,7 @@ enum PitcherSplitSelection: String, CaseIterable, Identifiable {
 @MainActor
 @Observable
 class PlayerViewModel{
+    var hallOfFamePlayerIds: Set<Int> = []
     var statLine: PlayerStat?
     var secondStatLine: PlayerStat?
     var isLoading = false
@@ -154,7 +155,7 @@ class PlayerViewModel{
         case "ALCY", "NLCY":
             return "Cy Young"
         case "ALSS", "NLSS":
-            return "Silver Slugger"
+            return "S-Slugger"
         case "ALAS", "NLAS":
             return "All-Star"
         case "ALROY", "NLROY":
@@ -539,6 +540,43 @@ class PlayerViewModel{
         return nil
     }
     
-    
+    func getHallOfFameData() async {
+        isLoading = true
+        
+        let urlString = "https://statsapi.mlb.com/api/v1/awards/MLBHOF/recipients"
+        
+        print("We are accessing the URL \(urlString)")
+        
+        guard let url = URL(string: urlString) else {
+            print("ERROR: Could not create URL")
+            isLoading = false
+            return
+        }
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            guard let response = try? JSONDecoder().decode(HallOfFameResponse.self, from: data) else {
+                print("JSON Error: Could not decode JSON")
+                isLoading = false
+                return
+            }
+            
+            self.hallOfFamePlayerIds = Set(
+                response.awards.compactMap { $0.player?.id }
+            )
+            
+            print("Hall of Fame IDs loaded: \(hallOfFamePlayerIds.count)")
+            
+            isLoading = false
+            
+        } catch {
+            print("ERROR: \(error.localizedDescription)")
+            isLoading = false
+        }
+    }
+    func isHallOfFamer(playerId: Int) -> Bool {
+        hallOfFamePlayerIds.contains(playerId)
+    }
     
 }

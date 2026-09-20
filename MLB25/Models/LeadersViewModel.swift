@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum PlayerPoolFilter: String, CaseIterable {
+    case all = "All"
+    case rookies = "Rookies"
+}
+
 @MainActor
 @Observable
 class LeadersViewModel {
@@ -14,7 +19,9 @@ class LeadersViewModel {
     var selectedSeason: String = "2026"
     var isLoading = false
     var errorMessage = ""
-
+    var rookiesOnly: Bool = false
+    var poolFilter: PlayerPoolFilter = .all
+    
     var hittingLeaders: [HittingLeaderCategory: [LeaderEntry]] = [:]
     var pitchingLeaders: [PitchingLeaderCategory: [LeaderEntry]] = [:]
 
@@ -30,12 +37,21 @@ class LeadersViewModel {
                 for category in HittingLeaderCategory.allCases {
                     let pool: String
 
+                    if poolFilter == .rookies {
                         switch category {
-                        case .onBasePlusSlugging, .avg:
+                        case .onBasePlusSlugging, .avg, .onBasePercentage:
+                            pool = "qualified_rookies"
+                        default:
+                            pool = "rookies"
+                        }
+                    } else {
+                        switch category {
+                        case .onBasePlusSlugging, .avg, .onBasePercentage:
                             pool = "qualified"
                         default:
                             pool = "all"
                         }
+                    }
                     temp[category] = try await fetchLeaders(
                         category: category.rawValue,
                         statGroup: "hitting",
@@ -53,12 +69,21 @@ class LeadersViewModel {
                 for category in PitchingLeaderCategory.allCases {
                     let pool: String
 
+                    if poolFilter == .rookies {
+                        switch category {
+                        case .earnedRunAverage, .whip:
+                            pool = "qualified_rookies"
+                        case .wins, .strikeOuts, .saves:
+                            pool = "rookies"
+                        }
+                    } else {
                         switch category {
                         case .earnedRunAverage, .whip:
                             pool = "qualified"
                         case .wins, .strikeOuts, .saves:
                             pool = "all"
                         }
+                    }
                     
                     temp[category] = try await fetchLeaders(
                         category: category.rawValue,

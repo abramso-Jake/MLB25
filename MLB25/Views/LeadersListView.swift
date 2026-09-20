@@ -28,12 +28,22 @@ struct LeadersListView: View {
             .padding()
             
             
-            Picker("Season", selection: $leadersVM.selectedSeason) {
-                ForEach(seasons, id: \.self) { season in
-                    Text(season).tag(season)
+            HStack{
+                Picker("Season", selection: $leadersVM.selectedSeason) {
+                    ForEach(seasons, id: \.self) { season in
+                        Text(season).tag(season)
+                    }
                 }
+                .pickerStyle(.menu)
+                
+                Picker("Filter", selection: $leadersVM.poolFilter) {
+                    ForEach(PlayerPoolFilter.allCases, id: \.self) { filter in
+                        Text(filter.rawValue).tag(filter)
+                    }
+                }
+                .pickerStyle(.menu)
+                .padding(.horizontal)
             }
-            .pickerStyle(.menu)
             
             
             if leadersVM.isLoading {
@@ -102,6 +112,9 @@ struct LeadersListView: View {
             Task { await leadersVM.loadLeaders() }
         }
         .onChange(of: leadersVM.selectedSeason) {
+            Task { await leadersVM.loadLeaders() }
+        }
+        .onChange(of: leadersVM.poolFilter) {
             Task { await leadersVM.loadLeaders() }
         }
         

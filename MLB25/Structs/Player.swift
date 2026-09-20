@@ -147,3 +147,15 @@ struct DisplayAward: Identifiable, Hashable {
     let season: String
     let name: String
 }
+
+struct HallOfFameResponse: Codable {
+    let awards: [HallOfFameAward]
+}
+
+struct HallOfFameAward: Codable {
+    let player: HallOfFamePlayer?
+}
+
+struct HallOfFamePlayer: Codable {
+    let id: Int
+}

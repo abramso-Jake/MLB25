@@ -151,30 +151,49 @@ struct PlayerListView: View {
                                 Text("Age: \(age)")
                                     .font(.headline)
                                     .fontWeight(.bold)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
                             }
                             if let throwHand = details.pitchHand?.description {
                                 Text("Throws: \(throwHand)")
                                     .font(.subheadline)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
                             }
                             if let batSide = details.batSide?.description {
                                 Text("Bats: \(batSide)")
                                     .font(.subheadline)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
                             }
                         }
                         
                         PlayerImage
                             .padding(.vertical)
+                            .padding(.bottom)
                             .offset(y: 20)
                         if case .career = selectedStat, !playerVM.careerAwardTallies.isEmpty {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("Awards")
                                     .font(.title3)
                                     .fontWeight(.bold)
+                                    .minimumScaleFactor(0.5)
+                                    .lineLimit(1)
+                             
 
+                                if playerVM.isHallOfFamer(playerId: player.id) {
+                                    Text("🏆 Hall of Famer")
+                                        .font(.headline)
+                                        .foregroundStyle(.yellow)
+                                        .fontWeight(.bold)
+                                        .minimumScaleFactor(0.5)
+                                        .lineLimit(1)
+                                    
+                                }
                                 ForEach(playerVM.careerAwardTallies, id: \.name) { award in
                                     Text("🏆 \(award.count)x \(award.name)")
                                         .font(.subheadline)
-                                        .minimumScaleFactor(0.5)
+                                        .minimumScaleFactor(0.3)
                                         .lineLimit(1)
                                 }
                                 
@@ -183,6 +202,7 @@ struct PlayerListView: View {
                             .padding()
                             .padding(.horizontal, 5)
                             .offset(x: -20)
+                            .frame(maxWidth: 250)
                             
                         }
                         if case let .season(season) = selectedStat {
@@ -193,6 +213,8 @@ struct PlayerListView: View {
                                     Text("Awards")
                                         .font(.title3)
                                         .fontWeight(.bold)
+                                        .minimumScaleFactor(0.5)
+                                        .lineLimit(1)
 
                                     ForEach(seasonAwards) { award in
                                         Text("⭐️ \(award.name)")
@@ -205,6 +227,7 @@ struct PlayerListView: View {
                                 .padding()
                                 .padding(.horizontal, 5)
                                 .offset(x: -20)
+                                .frame(maxWidth: 200)
                             }
                         }
                     }
@@ -358,6 +381,7 @@ struct PlayerListView: View {
                 )
                 selectedStat = playerVM.defaultSelection(for: player, entryMode: entry)
                 await playerVM.getData(for: player, selection: selectedStat)
+                await playerVM.getHallOfFameData()
             }
             
         }

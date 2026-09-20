@@ -53,7 +53,6 @@ struct SearchListView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
             }
-
             if searchVM.searchText.isEmpty {
                 Spacer()
                 VStack(spacing: 12) {

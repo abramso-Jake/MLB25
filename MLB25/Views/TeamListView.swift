@@ -7,7 +7,7 @@ enum TeamSortMode: String, CaseIterable {
 
 struct TeamListView: View {
     @State private var teamsVM = TeamViewModel()
-    @State private var sortMode: TeamSortMode = .alphabetical
+    @State private var sortMode: TeamSortMode = .standings
     @State private var searchText = ""
 
     var filteredTeams: [Team] {
@@ -75,10 +75,12 @@ struct TeamListView: View {
                     } label: {
                         HStack {
                             Text("\(team.name):")
+                                .minimumScaleFactor(0.5)
                             Text(teamsVM.recordsByTeamID[team.id] ?? "--")
                                 .foregroundStyle(.primary)
                         }
                         .font(.title3)
+                        .lineLimit(1)
                     }
                 }
                 .listStyle(.plain)
