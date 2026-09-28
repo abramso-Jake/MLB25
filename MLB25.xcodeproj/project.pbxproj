@@ -26,6 +26,9 @@
 		95013ADE2F8C22A6007BC8F4 /* SearchListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95013AC62F8C22A6007BC8F4 /* SearchListView.swift */; };
 		95013ADF2F8C22A6007BC8F4 /* TeamListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95013AC72F8C22A6007BC8F4 /* TeamListView.swift */; };
 		95013AE02F8C22A6007BC8F4 /* MLB25App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95013ACB2F8C22A6007BC8F4 /* MLB25App.swift */; };
+		956EFBFE306AEC38003FB4AB /* CompareViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956EFBFD306AEC38003FB4AB /* CompareViewModel.swift */; };
+		956EFC00306AEC92003FB4AB /* CompareListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956EFBFF306AEC92003FB4AB /* CompareListView.swift */; };
+		956EFC02306AECA2003FB4AB /* CompareSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956EFC01306AECA2003FB4AB /* CompareSearchSheet.swift */; };
 		957CD2A32F9528A2000FB709 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957CD2A22F9528A2000FB709 /* Chat.swift */; };
 		957CD2A52F9528C0000FB709 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957CD2A42F9528C0000FB709 /* ChatViewModel.swift */; };
 		957CD2BF2F957C4E000FB709 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957CD2BE2F957C4E000FB709 /* ChatListView.swift */; };
@@ -56,6 +59,9 @@
 		95013AC92F8C22A6007BC8F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		95013ACA2F8C22A6007BC8F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95013ACB2F8C22A6007BC8F4 /* MLB25App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLB25App.swift; sourceTree = "<group>"; };
+		956EFBFD306AEC38003FB4AB /* CompareViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareViewModel.swift; sourceTree = "<group>"; };
+		956EFBFF306AEC92003FB4AB /* CompareListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareListView.swift; sourceTree = "<group>"; };
+		956EFC01306AECA2003FB4AB /* CompareSearchSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareSearchSheet.swift; sourceTree = "<group>"; };
 		957CD2A22F9528A2000FB709 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		957CD2A42F9528C0000FB709 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		957CD2BE2F957C4E000FB709 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
@@ -80,6 +86,7 @@
 		95013ABA2F8C22A6007BC8F4 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				956EFBFD306AEC38003FB4AB /* CompareViewModel.swift */,
 				95013AB52F8C22A6007BC8F4 /* LeadersViewModel.swift */,
 				957CD2A42F9528C0000FB709 /* ChatViewModel.swift */,
 				95013AB62F8C22A6007BC8F4 /* PlayerViewModel.swift */,
@@ -110,6 +117,8 @@
 			isa = PBXGroup;
 			children = (
 				95013AC32F8C22A6007BC8F4 /* LeadersListView.swift */,
+				956EFC01306AECA2003FB4AB /* CompareSearchSheet.swift */,
+				956EFBFF306AEC92003FB4AB /* CompareListView.swift */,
 				957CD2BE2F957C4E000FB709 /* ChatListView.swift */,
 				95013AC62F8C22A6007BC8F4 /* SearchListView.swift */,
 				95013AC42F8C22A6007BC8F4 /* PlayerListView.swift */,
@@ -181,7 +190,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2640;
-				LastUpgradeCheck = 2640;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					95E794BD2F7DC95B006ADAC6 = {
 						CreatedOnToolsVersion = 26.4;
@@ -241,10 +250,13 @@
 				95013AD82F8C22A6007BC8F4 /* Standings.swift in Sources */,
 				95013AD92F8C22A6007BC8F4 /* Team.swift in Sources */,
 				95013ADA2F8C22A6007BC8F4 /* FrontListView.swift in Sources */,
+				956EFBFE306AEC38003FB4AB /* CompareViewModel.swift in Sources */,
 				95013ADB2F8C22A6007BC8F4 /* LeadersListView.swift in Sources */,
 				95013ADC2F8C22A6007BC8F4 /* PlayerListView.swift in Sources */,
 				95013ADD2F8C22A6007BC8F4 /* RosterListView.swift in Sources */,
 				95013ADE2F8C22A6007BC8F4 /* SearchListView.swift in Sources */,
+				956EFC02306AECA2003FB4AB /* CompareSearchSheet.swift in Sources */,
+				956EFC00306AEC92003FB4AB /* CompareListView.swift in Sources */,
 				95013ADF2F8C22A6007BC8F4 /* TeamListView.swift in Sources */,
 				957CD2A52F9528C0000FB709 /* ChatViewModel.swift in Sources */,
 				95013AE02F8C22A6007BC8F4 /* MLB25App.swift in Sources */,
@@ -313,6 +325,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -370,6 +383,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};

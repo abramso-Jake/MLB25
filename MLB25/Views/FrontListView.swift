@@ -28,6 +28,14 @@ struct FrontListView: View {
             }
 
             NavigationStack {
+                CompareListView()
+            }
+            .tabItem {
+                Image(systemName: "arrow.down.left.and.arrow.up.right")
+                Text("Compare")
+            }
+            
+            NavigationStack {
                 ChatListView()
             }
             .tabItem {
