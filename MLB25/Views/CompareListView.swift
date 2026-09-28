@@ -105,7 +105,7 @@ struct CompareListView: View {
         } else if let message = compareVM.missingLineMessage {
             notice(message)
 
-        } else if compareVM.mismatchMessage != nil {
+        } else if let message = compareVM.mismatchMessage {
             HStack(alignment: .top, spacing: 8) {
                 soloStatLine(for: compareVM.left)
                 soloStatLine(for: compareVM.right)
