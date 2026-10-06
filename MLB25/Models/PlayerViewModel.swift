@@ -80,6 +80,22 @@ enum PitcherSplitSelection: String, CaseIterable, Identifiable {
     }
 }
 
+enum SeasonTypeSelection: String, CaseIterable, Identifiable {
+    case regular = "Regular"
+    case postseason = "Postseason"
+
+    var id: String { rawValue }
+
+    var gameType: String? {
+        switch self {
+        case .regular:
+            return nil
+        case .postseason:
+            return "P"
+        }
+    }
+}
+
 @MainActor
 @Observable
 class PlayerViewModel{
@@ -191,9 +207,9 @@ class PlayerViewModel{
         }
     }
     
-    func getHitterSplitStats(for player: Roster, season: String, sitCode: String?) async {
+    func getHitterSplitStats(for player: Roster, season: String, sitCode: String?, gameType: String? = nil) async {
         if sitCode == nil {
-            await getData(for: player, selection: .season(season))
+            await getData(for: player, selection: .season(season), gameType: gameType)
             return
         }
 
@@ -201,7 +217,11 @@ class PlayerViewModel{
         errorMessage = ""
         statLine = nil
 
-        let urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=hitting&sitCodes=\(sitCode!)&season=\(season)"
+        var urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=hitting&sitCodes=\(sitCode!)&season=\(season)"
+
+        if let gameType {
+            urlString += "&gameType=\(gameType)"
+        }
 
         guard let url = URL(string: urlString) else {
             errorMessage = "Bad URL"
@@ -226,9 +246,9 @@ class PlayerViewModel{
         isLoading = false
     }
     
-    func getPitcherSplitStats(for player: Roster, season: String, sitCode: String?) async {
+    func getPitcherSplitStats(for player: Roster, season: String, sitCode: String?, gameType: String? = nil) async {
         if sitCode == nil {
-            await getData(for: player, selection: .season(season))
+            await getData(for: player, selection: .season(season), gameType: gameType)
             return
         }
 
@@ -236,7 +256,11 @@ class PlayerViewModel{
         errorMessage = ""
         statLine = nil
 
-        let urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=pitching&sitCodes=\(sitCode!)&season=\(season)"
+        var urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=pitching&sitCodes=\(sitCode!)&season=\(season)"
+
+        if let gameType {
+            urlString += "&gameType=\(gameType)"
+        }
 
         guard let url = URL(string: urlString) else {
             errorMessage = "Bad URL"
@@ -261,9 +285,9 @@ class PlayerViewModel{
         isLoading = false
     }
     
-    func getTwoWayPitcherSplitStats(for player: Roster, season: String, sitCode: String?) async {
+    func getTwoWayPitcherSplitStats(for player: Roster, season: String, sitCode: String?, gameType: String? = nil) async {
         if sitCode == nil {
-            await getData(for: player, selection: .season(season))
+            await getData(for: player, selection: .season(season), gameType: gameType)
             return
         }
 
@@ -271,7 +295,11 @@ class PlayerViewModel{
         errorMessage = ""
         secondStatLine = nil
 
-        let urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=pitching&sitCodes=\(sitCode!)&season=\(season)"
+        var urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=statSplits&group=pitching&sitCodes=\(sitCode!)&season=\(season)"
+
+        if let gameType {
+            urlString += "&gameType=\(gameType)"
+        }
 
         guard let url = URL(string: urlString) else {
             errorMessage = "Bad URL"
@@ -296,7 +324,7 @@ class PlayerViewModel{
         isLoading = false
     }
     
-    func getData(for player: Roster, selection: PlayerStatSelection) async { //Put function on guide
+    func getData(for player: Roster, selection: PlayerStatSelection, gameType: String? = nil) async { //Put function on guide
         isLoading = true
         errorMessage = ""
         statLine = nil
@@ -312,6 +340,11 @@ class PlayerViewModel{
                 if let season = selection.seasonValue{
                     hittingURL += "&season=\(season)"
                     pitchingURL += "&season=\(season)"
+                }
+
+                if let gameType {
+                    hittingURL += "&gameType=\(gameType)"
+                    pitchingURL += "&gameType=\(gameType)"
                 }
                 
                 guard let hittingURLObj = URL(string: hittingURL), let pitchingURLObj = URL(string: pitchingURL) else {
@@ -339,6 +372,10 @@ class PlayerViewModel{
                 if let season = selection.seasonValue {
                     urlString += "&season=\(season)"
                 }
+
+                if let gameType {
+                    urlString += "&gameType=\(gameType)"
+                }
                 
                 guard let url = URL(string: urlString) else {
                     errorMessage = "Bad URL"
@@ -360,45 +397,6 @@ class PlayerViewModel{
             print("ERROR: \(error.localizedDescription)")
         }
         isLoading = false
-        
-        //        let group = player.positionAbbreviation == "P" ? "pitching" : "hitting"
-        //
-        //        var urlString = "https://statsapi.mlb.com/api/v1/people/\(player.id)/stats?stats=\(selection.statsValue)&group=\(group)"
-        //
-        //        if let season = selection.seasonValue {
-        //            urlString += "&season=\(season)"
-        //        }
-        //
-        //        print("We are accessing the URL \(urlString)") //Need URL object
-        //        guard let url = URL(string: urlString) else {
-        //            print("ERROR: could not create a url from the string")
-        //            isLoading = false
-        //            return
-        //        }
-        //        do {
-        //            let (data, _) = try await URLSession.shared.data(from: url)
-        //            do {
-        //                let response = try JSONDecoder().decode(PlayerStatsArray.self, from: data)
-        //                self.statLine = response.stats.first?.splits.first?.stat
-        //                if self.statLine == nil {
-        //                    errorMessage = "No Stats Available"
-        //                }
-        //            } catch {
-        //                print("JSON Error: \(error)")
-        //                errorMessage = "JSON Decoding error"
-        //                isLoading = false
-        //                return
-        //            }
-        //            isLoading = false
-        //        } catch{
-        //            errorMessage = "Error loading player stats."
-        //            print("ERROR: \(error.localizedDescription)")
-        //            isLoading = false
-        //        }
-        //
-        //
-        //    }
-        
     }
     
     func getAvailableSeasons(playerId: Int, position: String) async {

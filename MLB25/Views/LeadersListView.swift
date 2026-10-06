@@ -43,6 +43,13 @@ struct LeadersListView: View {
                 }
                 .pickerStyle(.menu)
                 .padding(.horizontal)
+                
+                Picker("Season Type", selection: $leadersVM.seasonType) {
+                    ForEach(SeasonTypeSelection.allCases) { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
+                .pickerStyle(.menu)
             }
             
             
@@ -117,6 +124,9 @@ struct LeadersListView: View {
         .onChange(of: leadersVM.poolFilter) {
             Task { await leadersVM.loadLeaders() }
         }
+        .onChange(of: leadersVM.seasonType) {
+            Task { await leadersVM.loadLeaders() }
+        }
         
         
     }
@@ -127,5 +137,3 @@ struct LeadersListView: View {
         LeadersListView()
     }
 }
-
-

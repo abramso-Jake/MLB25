@@ -21,6 +21,7 @@ class LeadersViewModel {
     var errorMessage = ""
     var rookiesOnly: Bool = false
     var poolFilter: PlayerPoolFilter = .all
+    var seasonType: SeasonTypeSelection = .regular
     
     var hittingLeaders: [HittingLeaderCategory: [LeaderEntry]] = [:]
     var pitchingLeaders: [PitchingLeaderCategory: [LeaderEntry]] = [:]
@@ -37,7 +38,9 @@ class LeadersViewModel {
                 for category in HittingLeaderCategory.allCases {
                     let pool: String
 
-                    if poolFilter == .rookies {
+                    if seasonType == .postseason {
+                        pool = poolFilter == .rookies ? "rookies" : "all"
+                    } else if poolFilter == .rookies {
                         switch category {
                         case .onBasePlusSlugging, .avg, .onBasePercentage:
                             pool = "qualified_rookies"
@@ -57,7 +60,8 @@ class LeadersViewModel {
                         statGroup: "hitting",
                         season: selectedSeason,
                         limit: 5,
-                        playerPool: pool
+                        playerPool: pool,
+                        gameType: seasonType.gameType
                     )
                 }
                 isLoading = false
@@ -69,7 +73,9 @@ class LeadersViewModel {
                 for category in PitchingLeaderCategory.allCases {
                     let pool: String
 
-                    if poolFilter == .rookies {
+                    if seasonType == .postseason {
+                        pool = poolFilter == .rookies ? "rookies" : "all"
+                    } else if poolFilter == .rookies {
                         switch category {
                         case .earnedRunAverage, .whip:
                             pool = "qualified_rookies"
@@ -90,7 +96,8 @@ class LeadersViewModel {
                         statGroup: "pitching",
                         season: selectedSeason,
                         limit: 5,
-                        playerPool: pool
+                        playerPool: pool,
+                        gameType: seasonType.gameType
                     )
                 }
                 isLoading = false
@@ -105,8 +112,12 @@ class LeadersViewModel {
         isLoading = false
     }
 
-    private func fetchLeaders(category: String, statGroup: String, season: String, limit: Int, playerPool: String) async throws -> [LeaderEntry]{
-        let urlString = "https://statsapi.mlb.com/api/v1/stats/leaders?leaderCategories=\(category)&season=\(season)&statGroup=\(statGroup)&limit=\(limit)&playerPool=\(playerPool)"
+    private func fetchLeaders(category: String, statGroup: String, season: String, limit: Int, playerPool: String, gameType: String? = nil) async throws -> [LeaderEntry]{
+        var urlString = "https://statsapi.mlb.com/api/v1/stats/leaders?leaderCategories=\(category)&season=\(season)&statGroup=\(statGroup)&limit=\(limit)&playerPool=\(playerPool)"
+
+        if let gameType {
+            urlString += "&leaderGameTypes=\(gameType)"
+        }
 
         guard let url = URL(string: urlString) else {
             throw URLError(.badURL)

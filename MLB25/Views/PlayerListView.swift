@@ -25,6 +25,7 @@ struct PlayerListView: View {
     
     @State private var selectedHitterSplit: HitterSplitSelection = .overall
     @State private var selectedPitcherSplit: PitcherSplitSelection = .overall
+    @State private var selectedSeasonType: SeasonTypeSelection = .regular
     @State private var playerVM = PlayerViewModel()
     @State private var selectedStat: PlayerStatSelection = .career
     var body: some View {
@@ -45,9 +46,17 @@ struct PlayerListView: View {
                             selectedPitcherSplit = .overall
                         }
                         
-                        Task {
-                            await playerVM.getData(for: player, selection: selectedStat)
+                        refreshStats()
+                    }
+                    
+                    Picker("Season Type", selection: $selectedSeasonType) {
+                        ForEach(SeasonTypeSelection.allCases) { type in
+                            Text(type.rawValue).tag(type)
                         }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: selectedSeasonType) {
+                        refreshStats()
                     }
                     
                     if case .season = selectedStat {
@@ -59,15 +68,7 @@ struct PlayerListView: View {
                             }
                             .pickerStyle(.menu)
                             .onChange(of: selectedPitcherSplit) {
-                                if case let .season(season) = selectedStat {
-                                    Task {
-                                        await playerVM.getPitcherSplitStats(
-                                            for: player,
-                                            season: season,
-                                            sitCode: selectedPitcherSplit.sitCode
-                                        )
-                                    }
-                                }
+                                refreshStats()
                             }
                         } else if isHitterOnly {
                             Picker("Split", selection: $selectedHitterSplit) {
@@ -77,15 +78,7 @@ struct PlayerListView: View {
                             }
                             .pickerStyle(.menu)
                             .onChange(of: selectedHitterSplit) {
-                                if case let .season(season) = selectedStat {
-                                    Task {
-                                        await playerVM.getHitterSplitStats(
-                                            for: player,
-                                            season: season,
-                                            sitCode: selectedHitterSplit.sitCode
-                                        )
-                                    }
-                                }
+                                refreshStats()
                             }
                         } else if isTwoWay, case .season = selectedStat {
                             VStack(alignment: .leading, spacing: 8) {
@@ -96,15 +89,7 @@ struct PlayerListView: View {
                                 }
                                 .pickerStyle(.menu)
                                 .onChange(of: selectedHitterSplit) {
-                                    if case let .season(season) = selectedStat {
-                                        Task {
-                                            await playerVM.getHitterSplitStats(
-                                                for: player,
-                                                season: season,
-                                                sitCode: selectedHitterSplit.sitCode
-                                            )
-                                        }
-                                    }
+                                    refreshStats()
                                 }
 
                                 Picker("Pitching Split", selection: $selectedPitcherSplit) {
@@ -114,15 +99,7 @@ struct PlayerListView: View {
                                 }
                                 .pickerStyle(.menu)
                                 .onChange(of: selectedPitcherSplit) {
-                                    if case let .season(season) = selectedStat {
-                                        Task {
-                                            await playerVM.getTwoWayPitcherSplitStats(
-                                                for: player,
-                                                season: season,
-                                                sitCode: selectedPitcherSplit.sitCode
-                                            )
-                                        }
-                                    }
+                                    refreshStats()
                                 }
                             }
                         }
@@ -380,10 +357,47 @@ struct PlayerListView: View {
                     position: player.positionAbbreviation
                 )
                 selectedStat = playerVM.defaultSelection(for: player, entryMode: entry)
-                await playerVM.getData(for: player, selection: selectedStat)
+                await playerVM.getData(for: player, selection: selectedStat, gameType: selectedSeasonType.gameType)
                 await playerVM.getHallOfFameData()
             }
             
+        }
+    }
+    
+    private func refreshStats() {
+        Task {
+            if case .season(let season) = selectedStat {
+                if isPitcherOnly {
+                    await playerVM.getPitcherSplitStats(
+                        for: player,
+                        season: season,
+                        sitCode: selectedPitcherSplit.sitCode,
+                        gameType: selectedSeasonType.gameType
+                    )
+                } else if isHitterOnly {
+                    await playerVM.getHitterSplitStats(
+                        for: player,
+                        season: season,
+                        sitCode: selectedHitterSplit.sitCode,
+                        gameType: selectedSeasonType.gameType
+                    )
+                } else if isTwoWay {
+                    await playerVM.getHitterSplitStats(
+                        for: player,
+                        season: season,
+                        sitCode: selectedHitterSplit.sitCode,
+                        gameType: selectedSeasonType.gameType
+                    )
+                    await playerVM.getTwoWayPitcherSplitStats(
+                        for: player,
+                        season: season,
+                        sitCode: selectedPitcherSplit.sitCode,
+                        gameType: selectedSeasonType.gameType
+                    )
+                }
+            } else {
+                await playerVM.getData(for: player, selection: selectedStat, gameType: selectedSeasonType.gameType)
+            }
         }
     }
     
