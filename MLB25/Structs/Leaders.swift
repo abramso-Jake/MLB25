@@ -18,6 +18,7 @@ enum HittingLeaderCategory: String, CaseIterable, Identifiable {
     case homeRuns
     case hits
     case rbi
+    case walks
     case avg
     case onBasePercentage
     case onBasePlusSlugging
@@ -30,6 +31,7 @@ enum HittingLeaderCategory: String, CaseIterable, Identifiable {
         case .homeRuns: return "Home Runs"
         case .hits: return "Hits"
         case .rbi: return "RBIs"
+        case .walks: return "Walks"
         case .stolenBases: return "Stolen Bases"
         case .onBasePlusSlugging: return "OPS"
         case .avg: return "AVG"
@@ -44,6 +46,7 @@ enum PitchingLeaderCategory: String, CaseIterable, Identifiable {
     case saves
     case strikeOuts
     case whip
+    case inningsPitched
 
     var id: String { rawValue }
 
@@ -54,6 +57,7 @@ enum PitchingLeaderCategory: String, CaseIterable, Identifiable {
         case .saves: return "Saves"
         case .whip: return "WHIP"
         case .earnedRunAverage: return "ERA"
+        case .inningsPitched: return "IP"
         }
     }
 }

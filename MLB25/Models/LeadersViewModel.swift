@@ -26,6 +26,18 @@ class LeadersViewModel {
     var hittingLeaders: [HittingLeaderCategory: [LeaderEntry]] = [:]
     var pitchingLeaders: [PitchingLeaderCategory: [LeaderEntry]] = [:]
 
+    var displayedHittingCategories: [HittingLeaderCategory] {
+        seasonType == .postseason
+            ? [.homeRuns, .hits, .rbi, .walks, .stolenBases]
+            : HittingLeaderCategory.allCases
+    }
+
+    var displayedPitchingCategories: [PitchingLeaderCategory] {
+        seasonType == .postseason
+            ? [.wins, .saves, .strikeOuts, .inningsPitched]
+            : PitchingLeaderCategory.allCases
+    }
+
     func loadLeaders() async {
         isLoading = true
         errorMessage = ""
@@ -35,7 +47,7 @@ class LeadersViewModel {
             case .hitting:
                 var temp: [HittingLeaderCategory: [LeaderEntry]] = [:]
 
-                for category in HittingLeaderCategory.allCases {
+                for category in displayedHittingCategories {
                     let pool: String
 
                     if seasonType == .postseason {
@@ -70,7 +82,7 @@ class LeadersViewModel {
             case .pitching:
                 var temp: [PitchingLeaderCategory: [LeaderEntry]] = [:]
 
-                for category in PitchingLeaderCategory.allCases {
+                for category in displayedPitchingCategories {
                     let pool: String
 
                     if seasonType == .postseason {
@@ -79,14 +91,14 @@ class LeadersViewModel {
                         switch category {
                         case .earnedRunAverage, .whip:
                             pool = "qualified_rookies"
-                        case .wins, .strikeOuts, .saves:
+                        case .wins, .strikeOuts, .saves, .inningsPitched:
                             pool = "rookies"
                         }
                     } else {
                         switch category {
                         case .earnedRunAverage, .whip:
                             pool = "qualified"
-                        case .wins, .strikeOuts, .saves:
+                        case .wins, .strikeOuts, .saves, .inningsPitched:
                             pool = "all"
                         }
                     }

@@ -67,7 +67,7 @@ struct LeadersListView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 16) {
                         if leadersVM.selectedGroup == .hitting {
-                            ForEach(HittingLeaderCategory.allCases) { category in
+                            ForEach(leadersVM.displayedHittingCategories) { category in
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text(category.title)
                                         .font(.title3)
@@ -87,7 +87,7 @@ struct LeadersListView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 16))
                             }
                         } else {
-                            ForEach(PitchingLeaderCategory.allCases) { category in
+                            ForEach(leadersVM.displayedPitchingCategories) { category in
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text(category.title)
                                         .font(.title3)
